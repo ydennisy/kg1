@@ -10,48 +10,92 @@ datasource db {
   extensions = [vector]
 }
 
-model Node {
-  id        Int                          @id @default(autoincrement())
-  createdAt DateTime                     @default(now()) @map("created_at")
-  updatedAt DateTime                     @updatedAt @map("updated_at")
-  raw       String
-  title     String?
-  body      String?
-  // TODO: this should be required
-  embedding Unsupported("vector(1536)")?
+//model Node {
+//  id        Int                          @id @default(autoincrement())
+//  createdAt DateTime                     @default(now()) @map("created_at")
+//  updatedAt DateTime                     @updatedAt @map("updated_at")
 
-  tags  Tag[]  @relation("nodes_to_tags")
-  links Link[] @relation("nodes_to_links")
+//raw       String
+//  title     String?
+//body      String?
+// TODO: this should be required
+//  embedding Unsupported("vector(1536)")?
+
+//  edges Edge[]
+
+//tags  Tag[]  @relation("nodes_to_tags")
+//links Link[] @relation("nodes_to_links")
+
+//  @@index(id)
+//  @@map("nodes")
+//}
+
+model Node {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  title     String?
+
+  nodes Edge[] @relation("nodes_to_nodes")
 
   @@index(id)
   @@map("nodes")
 }
 
-model Tag {
-  id          Int                          @id @default(autoincrement())
-  createdAt   DateTime                     @default(now()) @map("created_at")
-  updatedAt   DateTime                     @updatedAt @map("updated_at")
-  name        String                       @unique
-  description String
-  // TODO: this should be required
-  embedding   Unsupported("vector(1536)")?
-
-  nodes Node[] @relation("nodes_to_tags")
-
-  @@map("tags")
+model Edge {
+  id       Int  @id @default(autoincrement())
+  parent   Node @relation("nodes_to_nodes", fields: [parentId], references: [id])
+  parentId Int
 }
 
-model Link {
-  id        Int                          @id @default(autoincrement())
-  createdAt DateTime                     @default(now()) @map("created_at")
-  updatedAt DateTime                     @updatedAt @map("updated_at")
-  raw       String                       @unique
-  cleaned   String                       @unique
-  title     String
-  // TODO: this should be required
-  embedding Unsupported("vector(1536)")?
-
-  nodes Node[] @relation("nodes_to_links")
-
-  @@map("links")
+model User {
+  id             Int     @id @default(autoincrement())
+  likedVideos    Video[] @relation(name: "UserLikedVideos")
+  dislikedVideos Video[] @relation(name: "UserDislikedVideos")
 }
+
+model Video {
+  id        Int    @id @default(autoincrement())
+  likers    User[] @relation(name: "UserLikedVideos")
+  dislikers User[] @relation(name: "UserDislikedVideos")
+}
+
+//model Edge {
+//  id Int @id @default(autoincrement())
+//  nodeParentId Int
+//  nodeChildId Int
+//  nodeParent  Node  @relation("nodes_to_nodes", fields: [nodeParentId], references: [id])
+//  nodeChild  Node  @relation("nodes_to_nodes", fields: [nodeChildId], references: [id])
+
+//  @@unique([nodeParentId, nodeChildId])
+//  @@map("edges")
+//}
+
+//model Tag {
+//  id          Int                          @id @default(autoincrement())
+//  createdAt   DateTime                     @default(now()) @map("created_at")
+//  updatedAt   DateTime                     @updatedAt @map("updated_at")
+//  name        String                       @unique
+//  description String
+// TODO: this should be required
+//  embedding   Unsupported("vector(1536)")?
+
+//  nodes Node[] @relation("nodes_to_tags")
+
+//  @@map("tags")
+//}
+
+// model Link {
+//  id        Int                          @id @default(autoincrement())
+//  createdAt DateTime                     @default(now()) @map("created_at")
+//  updatedAt DateTime                     @updatedAt @map("updated_at")
+//  raw       String                       @unique
+//  cleaned   String                       @unique
+//  title     String
+// TODO: this should be required
+//  embedding Unsupported("vector(1536)")?
+
+//  nodes Node[] @relation("nodes_to_links")
+
+//  @@map("links")
+//}
