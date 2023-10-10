@@ -10,33 +10,14 @@ datasource db {
   extensions = [vector]
 }
 
-//model Node {
-//  id        Int                          @id @default(autoincrement())
-//  createdAt DateTime                     @default(now()) @map("created_at")
-//  updatedAt DateTime                     @updatedAt @map("updated_at")
-
-//raw       String
-//  title     String?
-//body      String?
-// TODO: this should be required
-//  embedding Unsupported("vector(1536)")?
-
-//  edges Edge[]
-
-//tags  Tag[]  @relation("nodes_to_tags")
-//links Link[] @relation("nodes_to_links")
-
-//  @@index(id)
-//  @@map("nodes")
-//}
-
 model Node {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   title     String?
 
-  nodes Edge[] @relation("nodes_to_nodes")
+  nodeParents Edge[] @relation("parent_to_child")
+  nodeChildren Edge[] @relation("child_to_parent")
 
   @@index(id)
   @@map("nodes")
@@ -44,58 +25,12 @@ model Node {
 
 model Edge {
   id       Int  @id @default(autoincrement())
-  parent   Node @relation("nodes_to_nodes", fields: [parentId], references: [id])
+
+  parent   Node @relation("parent_to_child", fields: [parentId], references: [id])
   parentId Int
+  
+  child    Node @relation("child_to_parent", fields: [childId], references: [id])
+  childId  Int
+
+  @@map("edges")
 }
-
-model User {
-  id             Int     @id @default(autoincrement())
-  likedVideos    Video[] @relation(name: "UserLikedVideos")
-  dislikedVideos Video[] @relation(name: "UserDislikedVideos")
-}
-
-model Video {
-  id        Int    @id @default(autoincrement())
-  likers    User[] @relation(name: "UserLikedVideos")
-  dislikers User[] @relation(name: "UserDislikedVideos")
-}
-
-//model Edge {
-//  id Int @id @default(autoincrement())
-//  nodeParentId Int
-//  nodeChildId Int
-//  nodeParent  Node  @relation("nodes_to_nodes", fields: [nodeParentId], references: [id])
-//  nodeChild  Node  @relation("nodes_to_nodes", fields: [nodeChildId], references: [id])
-
-//  @@unique([nodeParentId, nodeChildId])
-//  @@map("edges")
-//}
-
-//model Tag {
-//  id          Int                          @id @default(autoincrement())
-//  createdAt   DateTime                     @default(now()) @map("created_at")
-//  updatedAt   DateTime                     @updatedAt @map("updated_at")
-//  name        String                       @unique
-//  description String
-// TODO: this should be required
-//  embedding   Unsupported("vector(1536)")?
-
-//  nodes Node[] @relation("nodes_to_tags")
-
-//  @@map("tags")
-//}
-
-// model Link {
-//  id        Int                          @id @default(autoincrement())
-//  createdAt DateTime                     @default(now()) @map("created_at")
-//  updatedAt DateTime                     @updatedAt @map("updated_at")
-//  raw       String                       @unique
-//  cleaned   String                       @unique
-//  title     String
-// TODO: this should be required
-//  embedding Unsupported("vector(1536)")?
-
-//  nodes Node[] @relation("nodes_to_links")
-
-//  @@map("links")
-//}
