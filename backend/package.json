@@ -15,13 +15,13 @@
     "@tapjs/node-serialize": "^1.0.0",
     "@types/node": "^20.6.3",
     "nodemon": "^3.0.1",
-    "prisma": "^5.3.1",
+    "prisma": "^5.4.2",
     "tap": "^18.1.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@prisma/client": "^5.3.1",
+    "@prisma/client": "^5.4.2",
     "entities": "^4.5.0",
     "fastify": "^4.23.2",
     "got-scraping": "^3.2.15",
