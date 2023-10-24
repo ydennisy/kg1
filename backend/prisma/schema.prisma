@@ -12,12 +12,12 @@ model Node {
   id           Int      @id @default(autoincrement())
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
+  raw          String
   title        String?
   type         NodeType
   nodeParents  Edge[]   @relation("child_to_parent")
   nodeChildren Edge[]   @relation("parent_to_child")
   note         Note?
-  pdf          Pdf?
   webPage      WebPage?
 
   @@index(id)
@@ -39,7 +39,6 @@ model WebPage {
   id     Int    @id @default(autoincrement())
   url    String
   title  String
-  // html String
   node   Node   @relation(fields: [nodeId], references: [id])
   nodeId Int    @unique @map("node_id")
 
@@ -47,23 +46,17 @@ model WebPage {
 }
 
 model Note {
-  id     Int  @id @default(autoincrement())
-  node   Node @relation(fields: [nodeId], references: [id])
-  nodeId Int  @unique @map("node_id")
+  id     Int    @id @default(autoincrement())
+  raw    String
+  title  String
+  body   String
+  node   Node   @relation(fields: [nodeId], references: [id])
+  nodeId Int    @unique @map("node_id")
 
   @@map("notes")
 }
 
-model Pdf {
-  id     Int  @id @default(autoincrement())
-  node   Node @relation(fields: [nodeId], references: [id])
-  nodeId Int  @unique @map("node_id")
-
-  @@map("pdfs")
-}
-
 enum NodeType {
-  PDF
   NOTE
   WEB_PAGE
 }

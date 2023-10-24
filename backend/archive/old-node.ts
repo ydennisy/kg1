@@ -1,31 +1,32 @@
-//enum NodeType {
-//  NODE = "NODE",
-//  WEB_PAGE = "WEB_PAGE"
-//}
+interface Tag {
+  id: number;
+  name: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-// type NodeType = 'NODE' | 'WEB_PAGE';
-
-//const NodeTypeConst = {
-//  NOTE: 'NOTE',
-//  WEB_PAGE: 'WEB_PAGE'
-//};
-
-//type NodeType = (typeof NodeTypeConst)[keyof typeof NodeTypeConst]
+interface Link {
+  id: number;
+  raw: string;
+  cleaned: string;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 interface BaseNode {
   raw: string;
-  title: string | null; // TODO: again prisma forces to use null vs undefined.
-  // TODO: figure out how to marry prisma and TS enums.
-  type: any;
+  body: string | null;
+  title: string | null;
   // TODO: check why prisma does not allow vector to be required.
-  // embedding?: number[];
-  links?: string[];
-  parents?: Node[];
-  children?: Node[];
+  embedding?: number[];
 }
 
 interface TransientNode extends BaseNode {
   __kind: 'transient';
+  tags?: string[];
+  links?: string[];
 }
 
 interface PersistedNode extends BaseNode {
@@ -33,9 +34,17 @@ interface PersistedNode extends BaseNode {
   id: number;
   createdAt: Date;
   updatedAt: Date;
+  tags?: Tag[];
+  links?: Link[];
 }
 
 type NodeProps = TransientNode | PersistedNode;
+
+/* function isPersistedNode(
+  props: Omit<NodeProps, '__kind'>,
+): props is PersistedNode {
+  return (props as PersistedNode).id !== undefined;
+} */
 
 type TransientNodeProps = Omit<TransientNode, '__kind'>;
 type PersistedNodeProps = Omit<PersistedNode, '__kind'>;
@@ -53,42 +62,38 @@ class Node {
     this.props = props;
   }
 
+  get body() {
+    return this.props.body;
+  }
+
   public static create(props: TransientNodeProps | PersistedNodeProps): Node {
     if (isPersistedNodeProps(props)) {
       return new Node({ ...props, __kind: 'persisted' });
     } else {
-      if (props.links) {
-        const children = 
-          props.links.map((link) => Node.create({ raw: link, title: null, type: 'WEB_PAGE' }));
-          return new Node({ ...props, children, __kind: 'transient' });
-      }
       return new Node({ ...props, __kind: 'transient' });
     }
   }
 
   public toDTO() {
-    const { __kind, children, ...rest } = this.props;
-
-    // TODO: figure out how to use toDTO(), inside of toDTO()!
-    // return { ...rest, children: children ? children?.map((child) => child.toDTO()) : []};
-
-    return { ...rest, children: children ? children.map((child) => child.props) : []};
+    const { __kind, ...rest } = this.props;
+    return { ...rest };
   }
 
   public toPersistence() {
-    const { __kind, raw, title, type, children } = this.props;
+    const { __kind, tags, links, raw, body, title, embedding } = this.props;
     if (__kind === 'persisted') {
       const { id } = this.props;
       return {
         id,
         raw,
+        body,
         title,
-        type,
-        children,
+        embedding,
+        tags: tags?.map(({ name }) => name),
+        links: links?.map(({ cleaned }) => cleaned),
       };
     }
-
-    return { raw, title, type, children };
+    return { raw, body, title, tags, links, embedding };
   }
 }
 
