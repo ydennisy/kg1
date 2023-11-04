@@ -9,6 +9,7 @@ CREATE TABLE "nodes" (
     "raw" TEXT NOT NULL,
     "title" TEXT,
     "type" "NodeType" NOT NULL,
+    "embedding" vector(1536),
 
     CONSTRAINT "nodes_pkey" PRIMARY KEY ("id")
 );
@@ -35,7 +36,6 @@ CREATE TABLE "web_pages" (
 -- CreateTable
 CREATE TABLE "notes" (
     "id" SERIAL NOT NULL,
-    "raw" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "body" TEXT NOT NULL,
     "node_id" INTEGER NOT NULL,

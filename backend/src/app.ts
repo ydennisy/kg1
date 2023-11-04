@@ -1,9 +1,11 @@
 import Fastify from 'fastify';
 import { PrismaClient } from '@prisma/client';
-import { Node } from './node';
+import { Node, NodeFactory } from './node';
 import { PrismaNodeRepo } from './repo';
 import { parse } from './parser';
 import { embed } from './embedder';
+import { scrape } from './scraper';
+import { generateTitle } from './augmentor';
 
 interface GetNodeParams {
   id: number;
@@ -29,19 +31,40 @@ app.post<{ Body: PostNodeBody }>('/nodes', async (req, _) => {
   if (!raw && typeof raw === 'string' && raw.length > 5) {
     throw new Error('400 - Raw must be present as a string of > 5 chars.');
   }
-  const { title, body, links } = parse(raw);
-  let node;
-  if (links.length === 1 && body === links[0]) {
-    node = Node.create({ raw, title, type: 'WEB_PAGE' });
-  } else if (body) {
-    node = Node.create({ raw, title, links, type: 'NOTE' });
-  } else {
-    throw new Error('Node format not supported.');
+  const parserResult = parse(raw);
+  const nodes = NodeFactory.create(parserResult);
+
+  const processNode = async (node: Node) => {
+    if (node.type === 'WEB_PAGE') {
+      const title = (await scrape(node.raw)).title;
+      node.title = title;
+    }
+    if (node.type === 'NOTE' && !node.title) {
+      const title = await generateTitle(node.raw);
+      node.title = title;
+    }
+    const embedding = await embed(node.text);
+    node.embedding = embedding;
+
+    if (node.children && node.children.length > 0) {
+      for (const childNode of node.children) {
+        await processNode(childNode);
+      }
+    }
+  };
+
+  // Process each node recursively
+  for (const node of nodes) {
+    await processNode(node);
   }
-  //const embedding = await embed(parsed.raw);
-  //const node = Node.create({ raw, title: null, type: 'NOTE' });
-  const persistedNode = await nodeRepo.create(node);
-  return { ...persistedNode.toDTO() };
+
+  const persistedNodes = await nodeRepo.createMany(nodes);
+  // TODO: add proper error handling
+  const isNode = (value: any): value is Node => {
+    return value instanceof Node;
+  };
+  const validNodes = persistedNodes.filter(isNode);
+  return validNodes.map((node) => node.toDTO());
 });
 
 app.get<{ Params: GetNodeParams }>('/nodes/:id', async (req, res) => {

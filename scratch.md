@@ -9,3 +9,7 @@ In the third case we have the note as the parent and n children created, where n
 
 Parser will extract title, if inside of frontmatter.
 Parser will split out frontmatter from the main body.
+
+- https://github.com/withastro/astro/blob/main/packages/markdown/remark/package.json
+- https://github.com/remarkjs/remark#example-support-for-gfm-and-frontmatter
+- https://github.com/remarkjs/remark-frontmatter/blob/main/lib/index.js

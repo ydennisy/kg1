@@ -1,22 +1,23 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
   // directUrl  = env("DATABASE_URL_DIRECT") need to add support for pg bouncer later :)
 }
 
 model Node {
-  id           Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  id           Int                          @id @default(autoincrement())
+  createdAt    DateTime                     @default(now()) @map("created_at")
+  updatedAt    DateTime                     @updatedAt @map("updated_at")
   raw          String
   title        String?
   type         NodeType
-  nodeParents  Edge[]   @relation("child_to_parent")
-  nodeChildren Edge[]   @relation("parent_to_child")
+  embedding    Unsupported("vector(1536)")?
+  nodeParents  Edge[]                       @relation("child_to_parent")
+  nodeChildren Edge[]                       @relation("parent_to_child")
   note         Note?
   webPage      WebPage?
 
@@ -47,7 +48,6 @@ model WebPage {
 
 model Note {
   id     Int    @id @default(autoincrement())
-  raw    String
   title  String
   body   String
   node   Node   @relation(fields: [nodeId], references: [id])

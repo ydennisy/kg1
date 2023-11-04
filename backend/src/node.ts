@@ -1,27 +1,24 @@
-//enum NodeType {
-//  NODE = "NODE",
-//  WEB_PAGE = "WEB_PAGE"
-//}
+import { ParserResult } from './parser';
 
-// type NodeType = 'NODE' | 'WEB_PAGE';
-
-//const NodeTypeConst = {
-//  NOTE: 'NOTE',
-//  WEB_PAGE: 'WEB_PAGE'
-//};
-
-//type NodeType = (typeof NodeTypeConst)[keyof typeof NodeTypeConst]
+type NodeType = 'NOTE' | 'WEB_PAGE';
 
 interface BaseNode {
+  type: NodeType;
   raw: string;
-  title: string | null; // TODO: again prisma forces to use null vs undefined.
-  // TODO: figure out how to marry prisma and TS enums.
-  type: any;
-  // TODO: check why prisma does not allow vector to be required.
-  // embedding?: number[];
-  links?: string[];
+  title: string | null;
+  embedding?: number[];
   parents?: Node[];
   children?: Node[];
+}
+
+interface DTO {
+  id: number;
+  createdAt: Date;
+  updatedAt: Date;
+  raw: string;
+  title: string;
+  type: NodeType;
+  children?: DTO[];
 }
 
 interface TransientNode extends BaseNode {
@@ -31,6 +28,7 @@ interface TransientNode extends BaseNode {
 interface PersistedNode extends BaseNode {
   __kind: 'persisted';
   id: number;
+  title: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,30 +51,72 @@ class Node {
     this.props = props;
   }
 
+  get type() {
+    return this.props.type;
+  }
+
+  get raw() {
+    return this.props.raw;
+  }
+
+  get title(): string | null {
+    return this.props.title;
+  }
+
+  set title(title: string) {
+    if (this.props.title) {
+      throw new Error('Cannot set title if one already exists.');
+    }
+    this.props.title = title;
+  }
+
+  get text() {
+    return `${this.props.title} ${this.props.raw}`;
+  }
+
+  set embedding(embedding: number[]) {
+    this.props.embedding = embedding;
+  }
+
+  get children() {
+    return this.props.children;
+  }
+
   public static create(props: TransientNodeProps | PersistedNodeProps): Node {
     if (isPersistedNodeProps(props)) {
       return new Node({ ...props, __kind: 'persisted' });
     } else {
-      if (props.links) {
-        const children = 
-          props.links.map((link) => Node.create({ raw: link, title: null, type: 'WEB_PAGE' }));
-          return new Node({ ...props, children, __kind: 'transient' });
-      }
       return new Node({ ...props, __kind: 'transient' });
     }
   }
 
-  public toDTO() {
-    const { __kind, children, ...rest } = this.props;
+  public attachChildren(nodes: Node[]): void {
+    if (!this.props.children) {
+      this.props.children = [];
+    }
+    this.props.children.push(...nodes);
+  }
 
-    // TODO: figure out how to use toDTO(), inside of toDTO()!
-    // return { ...rest, children: children ? children?.map((child) => child.toDTO()) : []};
-
-    return { ...rest, children: children ? children.map((child) => child.props) : []};
+  public toDTO(): DTO {
+    const { __kind } = this.props;
+    if (__kind === 'transient') {
+      throw new Error('Must persist node before calling `toDTO()`');
+    }
+    const { id, createdAt, updatedAt, raw, title, type, children } = this.props;
+    return {
+      id,
+      createdAt,
+      updatedAt,
+      raw,
+      title,
+      type,
+      children: children ? children?.map((child) => child.toDTO()) : [],
+    };
   }
 
   public toPersistence() {
     const { __kind, raw, title, type, children } = this.props;
+
     if (__kind === 'persisted') {
       const { id } = this.props;
       return {
@@ -84,6 +124,7 @@ class Node {
         raw,
         title,
         type,
+        //embedding,
         children,
       };
     }
@@ -92,4 +133,30 @@ class Node {
   }
 }
 
-export { Node };
+class NodeFactory {
+  public static create(input: ParserResult): Node[] {
+    const { raw, title, body, links } = input;
+
+    if (body) {
+      let children;
+      const parent = Node.create({ raw, title, type: 'NOTE' });
+      if (links) {
+        children = links.map((link) =>
+          Node.create({ raw: link, title: null, type: 'WEB_PAGE' }),
+        );
+      }
+      if (children) {
+        parent.attachChildren(children);
+      }
+      return [parent];
+    }
+    if (links) {
+      return links.map((link) =>
+        Node.create({ raw: link, title: null, type: 'WEB_PAGE' }),
+      );
+    }
+    throw new Error('Unsupported node format, must contain links or body.');
+  }
+}
+
+export { Node, NodeFactory };

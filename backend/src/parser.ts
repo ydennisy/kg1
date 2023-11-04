@@ -1,4 +1,4 @@
-interface ParserResult {
+export interface ParserResult {
   raw: string;
   title: string | null;
   body: string | null;
@@ -53,6 +53,14 @@ const extractLinks = (body: string): string[] => {
   return links;
 };
 
+const bodyWithoutLinks = (body: string, links: string[]): string | null => {
+  let bodyWithoutLinks = body;
+  links.forEach((link) => {
+    bodyWithoutLinks = bodyWithoutLinks.replace(link, '').trim();
+  });
+  return bodyWithoutLinks.length > 0 ? bodyWithoutLinks : null;
+};
+
 // Main parse function
 const parse = (raw: string): ParserResult => {
   const result: ParserResult = {
@@ -65,11 +73,12 @@ const parse = (raw: string): ParserResult => {
 
   const { frontMatter, bodyStartIndex } = extractFrontMatter(raw);
   const { title, tags } = parseFrontMatter(frontMatter);
+  const body = raw.substring(bodyStartIndex).trim();
 
   result.title = title;
   result.tags = tags;
-  result.body = raw.substring(bodyStartIndex).trim();
-  result.links = extractLinks(result.body);
+  result.links = extractLinks(body);
+  result.body = bodyWithoutLinks(body, result.links);
 
   return result;
 };
