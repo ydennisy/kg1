@@ -20,7 +20,7 @@ export class PrismaNodeRepo implements NodeRepo {
     try {
       const { children, ...rest } = node.toPersistence();
       const parentResult = await this.prisma.node.create({ data: { ...rest } });
-      await this.updateEmbedding(parentResult.id, node.embedding);
+      await this.setEmbedding(parentResult.id, node.embedding);
       const childResults = [];
       if (children) {
         for (const child of children) {
@@ -28,7 +28,7 @@ export class PrismaNodeRepo implements NodeRepo {
           const childResult = await this.prisma.node.create({
             data: { ...rest },
           });
-          await this.updateEmbedding(childResult.id, child.embedding);
+          await this.setEmbedding(childResult.id, child.embedding);
           childResults.push(childResult);
           await this.prisma.edge.create({
             data: {
@@ -84,14 +84,25 @@ export class PrismaNodeRepo implements NodeRepo {
   }
 
   public async findAll(): Promise<Node[]> {
-    const result = await this.prisma.node.findMany();
-    return result.map((node) => Node.create(node));
+    const results = await this.prisma.node.findMany();
+    return results.map((node) => Node.create(node));
   }
 
-  private async updateEmbedding(
-    id: number,
-    embedding: number[],
-  ): Promise<void> {
+  public async search(queryEmbedding: number[]): Promise<Node[]> {
+    const queryEmbeddingSql = pgvector.toSql(queryEmbedding);
+    const results = await this.prisma.$queryRaw`
+        SELECT id, type, title, 1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
+        FROM nodes 
+        WHERE embedding IS NOT NULL
+        ORDER BY similarity DESC LIMIT 5`;
+    //@ts-ignore
+    return results.map((node) => Node.create(node));
+  }
+
+  private async setEmbedding(id: number, embedding: number[]): Promise<void> {
+    if (!embedding) {
+      throw new Error('When setting embedding it cannot be undefined.');
+    }
     const embeddingSql = pgvector.toSql(embedding);
     await this.prisma
       .$executeRaw`UPDATE nodes SET embedding = ${embeddingSql}::vector WHERE id = ${id}`;

@@ -18,6 +18,7 @@ interface DTO {
   raw: string;
   title: string;
   type: NodeType;
+  similarity?: number;
   children?: DTO[];
 }
 
@@ -31,6 +32,9 @@ interface PersistedNode extends BaseNode {
   title: string;
   createdAt: Date;
   updatedAt: Date;
+  // TODO: this is not good code, this key only exists when nodes are searched.
+  // Need either a whole new class to represent that, or another __kind?
+  similarity?: number;
 }
 
 type NodeProps = TransientNode | PersistedNode;
@@ -74,6 +78,13 @@ class Node {
     return `${this.props.title} ${this.props.raw}`;
   }
 
+  get embedding() {
+    if (!this.props.embedding) {
+      throw new Error('No embedding exists on node.');
+    }
+    return this.props.embedding;
+  }
+
   set embedding(embedding: number[]) {
     this.props.embedding = embedding;
   }
@@ -102,7 +113,8 @@ class Node {
     if (__kind === 'transient') {
       throw new Error('Must persist node before calling `toDTO()`');
     }
-    const { id, createdAt, updatedAt, raw, title, type, children } = this.props;
+    const { id, createdAt, updatedAt, raw, title, type, similarity, children } =
+      this.props;
     return {
       id,
       createdAt,
@@ -110,7 +122,8 @@ class Node {
       raw,
       title,
       type,
-      children: children ? children?.map((child) => child.toDTO()) : [],
+      similarity: similarity ? +similarity.toFixed(4) : undefined,
+      children: children ? children?.map((child) => child.toDTO()) : undefined,
     };
   }
 
@@ -124,7 +137,6 @@ class Node {
         raw,
         title,
         type,
-        //embedding,
         children,
       };
     }

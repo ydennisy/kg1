@@ -1,4 +1,5 @@
 Allowed inputs:
+
 - a single link
 - a note (.md, .txt, both?)
 - a note with links inside
@@ -13,3 +14,10 @@ Parser will split out frontmatter from the main body.
 - https://github.com/withastro/astro/blob/main/packages/markdown/remark/package.json
 - https://github.com/remarkjs/remark#example-support-for-gfm-and-frontmatter
 - https://github.com/remarkjs/remark-frontmatter/blob/main/lib/index.js
+
+inspiration
+
+- https://github.com/danswer-ai/danswer
+- https://github.com/pathwaycom/llm-app
+- https://ts.llamaindex.ai/
+- https://js.langchain.com/docs/get_started/introduction

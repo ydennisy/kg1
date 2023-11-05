@@ -6,9 +6,18 @@ import { parse } from './parser';
 import { embed } from './embedder';
 import { scrape } from './scraper';
 import { generateTitle } from './augmentor';
+import OpenAI from 'openai';
+
+import fs from 'fs';
+
+const openai = new OpenAI();
 
 interface GetNodeParams {
   id: number;
+}
+
+interface GetSearchParams {
+  q: string;
 }
 
 interface PostNodeBody {
@@ -79,6 +88,33 @@ app.get<{ Params: GetNodeParams }>('/nodes/:id', async (req, res) => {
 app.get('/nodes', async () => {
   const nodes = await nodeRepo.findAll();
   return nodes.map((node) => ({ ...node.toDTO() }));
+});
+
+app.get<{ Querystring: GetSearchParams }>('/search', async (req, _) => {
+  const { q } = req.query;
+  const queryEmbedding = await embed(q);
+  const results = await nodeRepo.search(queryEmbedding);
+  return results.map((node) => ({ ...node.toDTO() }));
+});
+
+app.get<{ Querystring: GetSearchParams }>('/stream', async (req, reply) => {
+  try {
+    const { q } = req.query;
+    const stream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'user', content: q }],
+      stream: true,
+    });
+
+    reply.raw.writeHead(200, { 'Content-Type': 'text/plain' });
+    for await (const part of stream) {
+      reply.raw.write(part.choices[0]?.delta?.content || '');
+    }
+    return reply.raw.end();
+  } catch (err) {
+    console.log(err);
+    reply.raw.end('Error sending chat stream.');
+  }
 });
 
 export { app };
