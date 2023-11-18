@@ -4,7 +4,8 @@ import { Node } from './node';
 
 export interface NodeRepo {
   create(node: Node): Promise<Node>;
-  find(id: number): Promise<Node | null>;
+  createMany(nodes: Node[]): Promise<(Node | Error)[]>;
+  findbyId(id: number): Promise<Node | null>;
   findAll(): Promise<Node[]>;
 }
 
@@ -17,75 +18,93 @@ export class PrismaNodeRepo implements NodeRepo {
 
   public async create(node: Node): Promise<Node> {
     try {
-      const { tags, links, embedding, ...rest } = node.toPersistence();
-      const foundTags = tags ? await this.findManyTagsByName(tags) : [];
-      const foundOrCreatedLinks = links
-        ? await this.findOrCreateManyLinksByRaw(links)
-        : [];
-
-      const result = await this.prisma.node.create({
-        data: {
-          ...rest,
-          tags: { connect: foundTags.map(({ id }) => ({ id })) },
-          links: { connect: foundOrCreatedLinks.map(({ id }) => ({ id })) },
-        },
-        include: { tags: true, links: true },
-      });
-
-      // TODO: I am not a fan of this - but it works for now.
-      // We need to insert the whole object as a single transaction.
-      if (embedding) {
-        const embeddingSql = pgvector.toSql(embedding);
-        await this.prisma
-          .$executeRaw`UPDATE nodes SET embedding = ${embeddingSql}::vector WHERE id = ${result.id}`;
+      const { children, ...rest } = node.toPersistence();
+      const parentResult = await this.prisma.node.create({ data: { ...rest } });
+      await this.setEmbedding(parentResult.id, node.embedding);
+      const childResults = [];
+      if (children) {
+        for (const child of children) {
+          const { children: _, ...rest } = child.toPersistence();
+          const childResult = await this.prisma.node.create({
+            data: { ...rest },
+          });
+          await this.setEmbedding(childResult.id, child.embedding);
+          childResults.push(childResult);
+          await this.prisma.edge.create({
+            data: {
+              parent: {
+                connect: {
+                  id: parentResult.id,
+                },
+              },
+              child: {
+                connect: {
+                  id: childResult.id,
+                },
+              },
+            },
+          });
+        }
       }
 
-      return Node.create({ ...result, embedding });
+      return Node.create({
+        ...parentResult,
+        children: childResults.map((node) => Node.create(node)),
+      });
     } catch (err) {
       console.error(err);
       throw new Error('Failed to persist node to database');
     }
   }
 
-  public async find(id: number): Promise<Node | null> {
+  public async createMany(nodes: Node[]): Promise<(Node | Error)[]> {
+    const creationPromises = nodes.map((node) =>
+      this.create(node)
+        .then((result) => result)
+        .catch((error) => error),
+    );
+
+    const results = await Promise.allSettled(creationPromises);
+
+    return results.map((result) => {
+      if (result.status === 'fulfilled') {
+        return result.value;
+      } else {
+        return new Error(`Failed to create node: ${result.reason}`);
+      }
+    });
+  }
+
+  public async findbyId(id: number): Promise<Node | null> {
     const result = await this.prisma.node.findUnique({
       where: { id },
-      include: { tags: true },
     });
 
     return result ? Node.create(result) : null;
   }
 
   public async findAll(): Promise<Node[]> {
-    const result = await this.prisma.node.findMany();
-    return result.map((node) => Node.create(node));
+    const results = await this.prisma.node.findMany();
+    return results.map((node) => Node.create(node));
   }
 
-  private async findManyTagsByName(tags: string[]) {
-    const foundTags = await this.prisma.tag.findMany({
-      where: { name: { in: tags } },
-    });
-    return foundTags;
+  public async search(queryEmbedding: number[]): Promise<Node[]> {
+    const queryEmbeddingSql = pgvector.toSql(queryEmbedding);
+    const results = await this.prisma.$queryRaw`
+        SELECT id, type, title, 1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
+        FROM nodes 
+        WHERE embedding IS NOT NULL
+        ORDER BY similarity DESC LIMIT 5`;
+    //@ts-ignore
+    return results.map((node) => Node.create(node));
   }
 
-  private async findOrCreateManyLinksByRaw(links: string[]) {
-    const foundLinks = await this.prisma.link.findMany({
-      where: { raw: { in: links } },
-    });
-    const foundRawValues = foundLinks.map((link) => link.raw);
-    const toCreate = links.filter((link) => !foundRawValues.includes(link));
-
-    // NOTE: we cannot use `createMany` as it does not return the created values.
-    // it is probably possible to use connectOrCreate to avoid this loop.
-    // https://github.com/prisma/prisma/issues/8131
-    const createdLinks = [];
-    for (const raw of toCreate) {
-      const createdLink = await this.prisma.link.create({
-        data: { raw, title: '', cleaned: '' },
-      });
-      createdLinks.push(createdLink);
+  private async setEmbedding(id: number, embedding: number[]): Promise<void> {
+    if (!embedding) {
+      throw new Error('When setting embedding it cannot be undefined.');
     }
-
-    return [...foundLinks, ...createdLinks];
+    const embeddingSql = pgvector.toSql(embedding);
+    await this.prisma
+      .$executeRaw`UPDATE nodes SET embedding = ${embeddingSql}::vector WHERE id = ${id}`;
   }
 }

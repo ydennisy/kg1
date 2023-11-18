@@ -7,7 +7,7 @@ t.test('scrapes a site and fetches title', async (t) => {
   const scraped = await scrape(URL);
   t.equal(
     scraped.title,
-    "Apify: Get fast, reliable data with Apify's web scraping tools",
+    'Apify: Full-stack web scraping and data extraction platform',
   );
   t.end();
 });
