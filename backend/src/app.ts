@@ -8,8 +8,6 @@ import { scrape } from './scraper';
 import { generateTitle } from './augmentor';
 import OpenAI from 'openai';
 
-import fs from 'fs';
-
 const openai = new OpenAI();
 
 interface GetNodeParams {
@@ -100,9 +98,23 @@ app.get<{ Querystring: GetSearchParams }>('/search', async (req, _) => {
 app.get<{ Querystring: GetSearchParams }>('/stream', async (req, reply) => {
   try {
     const { q } = req.query;
+    const queryEmbedding = await embed(q);
+    const results = await nodeRepo.search(queryEmbedding);
+    const titles = results.map((node) => `- ${node.toDTO().title}`).join('\n');
+    const input = `
+    Given the following list of documents, and query, you must
+    answer the question, or summarise the docs depending on the tone.
+    ----
+    DOCUMENTS:
+    ${titles}
+    ----
+    QUERY:
+    ${q}
+    `;
+    console.log(input);
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: q }],
+      messages: [{ role: 'user', content: input }],
       stream: true,
     });
 
