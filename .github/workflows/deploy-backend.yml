@@ -34,7 +34,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
         with:
           version: latest
-          project_id: kg1-prod
+          project_id: kg1-prod-405611
           install_components: beta
 
       - name: GCP Build Container
