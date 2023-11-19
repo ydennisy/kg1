@@ -1,7 +1,8 @@
 import axios from 'axios';
 import chalk from 'chalk';
 
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL =
+  process.env.BASE_URL || 'https://kg1-backend-j5dxapaafq-ew.a.run.app';
 
 const search = async (q: string): Promise<void> => {
   try {

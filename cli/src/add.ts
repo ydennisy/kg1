@@ -7,7 +7,8 @@ interface Node {
   type: 'NOTE' | 'WEB_PAGE';
 }
 
-const BASE_URL = process.env.BASE_URL;
+const BASE_URL =
+  process.env.BASE_URL || 'https://kg1-backend-j5dxapaafq-ew.a.run.app';
 
 const add = async (raw: string): Promise<void> => {
   try {
