@@ -1,9 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Hello World</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KG1</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        background-color: #000;
+        color: #fff;
+      }
+      .hero {
+        background-color: #000;
+        padding: 20px;
+        font-family: "Courier New", Courier, monospace;
+      }
+      .subtitle {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+      }
+      .social-icons {
+        margin-bottom: 20px;
+      }
+      .social-icons img {
+        width: 40px;
+        height: 40px;
+        margin: 0 10px;
+      }
+      .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+        height: 0;
+        overflow: hidden;
+      }
+      .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
   </head>
   <body>
-    <h1>Hello World</h1>
+    <div class="hero">
+      <pre>
+  _  ______ _ 
+ | |/ / ___/ |
+ | ' / |  _| |
+ | . \ |_| | |
+ |_|\_\____|_|
+        </pre
+      >
+    </div>
+    <div class="subtitle">Your Subtitle Here</div>
+    <div class="social-icons">
+      <a href="https://github.com/yourusername">
+        <img src="gh-white.svg" alt="GitHub" />
+      </a>
+      <a href="https://twitter.com/yourusername">
+        <img src="tw-white.svg" alt="Twitter" />
+      </a>
+    </div>
+    <div class="video-container">
+      <iframe
+        src="https://www.loom.com/embed/yourvideo"
+        frameborder="0"
+        allowfullscreen
+      ></iframe>
+    </div>
   </body>
 </html>
