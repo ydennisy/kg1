@@ -99,6 +99,16 @@ export class PrismaNodeRepo implements NodeRepo {
     return results.map((node) => Node.create(node));
   }
 
+  public async incrementOpenAiCounter(): Promise<number> {
+    const updatedCounter = await this.prisma.counter.update({
+      where: {
+        id: 1,
+      },
+      data: { value: { increment: 1 } },
+    });
+    return updatedCounter.value;
+  }
+
   private async setEmbedding(id: number, embedding: number[]): Promise<void> {
     if (!embedding) {
       throw new Error('When setting embedding it cannot be undefined.');

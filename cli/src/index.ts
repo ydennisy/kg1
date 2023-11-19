@@ -7,7 +7,7 @@ import figlet from 'figlet';
 import { Command } from 'commander';
 import { add } from './add';
 import { search } from './search';
-import axios from 'axios';
+import { chat } from './chat';
 
 const log = console.log;
 
@@ -41,29 +41,6 @@ program.command('add [raw]').action(async (raw) => {
 
 program.command('search <query>').action(async (query) => await search(query));
 
-program.command('stream <query>').action(async (query) => {
-  try {
-    const { data, status } = await axios.request({
-      method: 'get',
-      url: `http://localhost:8000/stream?q=${query}`,
-      responseType: 'stream',
-    });
-
-    data.on('data', (data: any) => {
-      process.stdout.write(data.toString());
-    });
-
-    data.on('error', (err: any) => {
-      console.log();
-      console.log('ERROR: ', err);
-    });
-
-    data.on('end', () => {
-      console.log();
-    });
-  } catch (err) {
-    console.log(err);
-  }
-});
+program.command('chat <query>').action(async (query) => await chat(query));
 
 program.parse(process.argv);

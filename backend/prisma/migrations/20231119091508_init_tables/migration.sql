@@ -43,6 +43,15 @@ CREATE TABLE "notes" (
     CONSTRAINT "notes_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "counters" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "value" INTEGER NOT NULL,
+
+    CONSTRAINT "counters_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE INDEX "nodes_id_idx" ON "nodes"("id");
 

@@ -1,10 +1,10 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   // directUrl  = env("DATABASE_URL_DIRECT") need to add support for pg bouncer later :)
 }
 
@@ -54,6 +54,14 @@ model Note {
   nodeId Int    @unique @map("node_id")
 
   @@map("notes")
+}
+
+model Counter {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Int
+
+  @@map("counters")
 }
 
 enum NodeType {

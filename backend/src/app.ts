@@ -26,6 +26,8 @@ const app = Fastify({
   logger: false,
 });
 
+const API_CALL_LIMIT = 3;
+
 const prisma = new PrismaClient();
 const nodeRepo = new PrismaNodeRepo(prisma);
 
@@ -88,15 +90,27 @@ app.get('/nodes', async () => {
   return nodes.map((node) => ({ ...node.toDTO() }));
 });
 
-app.get<{ Querystring: GetSearchParams }>('/search', async (req, _) => {
+app.get<{ Querystring: GetSearchParams }>('/search', async (req, res) => {
+  const counter = await nodeRepo.incrementOpenAiCounter();
+  if (counter >= API_CALL_LIMIT) {
+    return res.status(429).send({
+      message: `The API call limit of ${API_CALL_LIMIT} has been exhausted.`,
+    });
+  }
   const { q } = req.query;
   const queryEmbedding = await embed(q);
   const results = await nodeRepo.search(queryEmbedding);
   return results.map((node) => ({ ...node.toDTO() }));
 });
 
-app.get<{ Querystring: GetSearchParams }>('/stream', async (req, reply) => {
+app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
   try {
+    const counter = await nodeRepo.incrementOpenAiCounter();
+    if (counter >= API_CALL_LIMIT) {
+      return res.status(429).send({
+        message: `The API call limit of ${API_CALL_LIMIT} has been exhausted.`,
+      });
+    }
     const { q } = req.query;
     const queryEmbedding = await embed(q);
     const results = await nodeRepo.search(queryEmbedding);
@@ -118,14 +132,14 @@ app.get<{ Querystring: GetSearchParams }>('/stream', async (req, reply) => {
       stream: true,
     });
 
-    reply.raw.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.raw.writeHead(200, { 'Content-Type': 'text/plain' });
     for await (const part of stream) {
-      reply.raw.write(part.choices[0]?.delta?.content || '');
+      res.raw.write(part.choices[0]?.delta?.content || '');
     }
-    return reply.raw.end();
+    return res.raw.end();
   } catch (err) {
     console.log(err);
-    reply.raw.end('Error sending chat stream.');
+    res.raw.end('Error sending chat stream.');
   }
 });
 
