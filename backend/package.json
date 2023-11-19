@@ -3,14 +3,17 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "author": {
+    "name": "Dennis Yurkevich",
+    "email": "dennis.yurkevich@gmail.com"
+  },
+  "license": "MIT",
   "scripts": {
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
     "build": "tsc",
     "start": "node dist/src/app.js",
     "test": "tap run"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.6.3",
     "nodemon": "^3.0.1",

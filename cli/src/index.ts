@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 import 'dotenv/config';
 import os from 'os';
 import fs from 'fs';
