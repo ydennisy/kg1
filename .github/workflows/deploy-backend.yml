@@ -12,6 +12,12 @@ defaults:
   run:
     working-directory: backend
 
+env:
+  SERVICE_NAME: kg1-backend
+  GCP_PROJECT: kg1-prod
+  GCP_PROJECT_ID: kg1-prod-405611
+  GCP_REGION: europe-west1
+
 jobs:
   deploy:
     permissions:
@@ -27,24 +33,20 @@ jobs:
       - name: Setup GCP Auth
         uses: google-github-actions/auth@v1
         with:
-          project_id: kg1-prod-405611
-          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           export_environment_variables: true
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      - name: Setup Google Cloud
+      - name: Setup GCP SDK
         uses: google-github-actions/setup-gcloud@v1
         with:
           version: latest
-          project_id: kg1-prod-405611
           install_components: beta
+          project_id: ${{ env.GCP_PROJECT_ID }}
 
-      #- name: GCP Build Container
-      #run: gcloud builds submit . --tag gcr.io/kg1-prod/kg1-backend
-      #run: gcloud builds submit . --tag europe-docker.pkg.dev/kg1-prod/eu.gcr.io/kg1-backend
-      - name: GCP Deploy Container
-        run: gcloud run deploy kg1-backend --source . --region europe-west1
-        #run: |
-        #  gcloud run deploy kg1-backend \
-        #    #--image gcr.io/kg1-prod/kg1-backend \
-        #    --project kg1-prod \
-        #    --region europe-west1
+      - name: Deploy Container to GCP
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --source . \
+            --project ${{ env.GCP_PROJECT }} \
+            --region ${{ env.GCP_REGION }}
