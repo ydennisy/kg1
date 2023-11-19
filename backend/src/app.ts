@@ -5,10 +5,7 @@ import { PrismaNodeRepo } from './repo';
 import { parse } from './parser';
 import { embed } from './embedder';
 import { scrape } from './scraper';
-import { generateTitle } from './augmentor';
-import OpenAI from 'openai';
-
-const openai = new OpenAI();
+import { generateTitle, summariseOrAnswerFromDocuments } from './llm';
 
 interface GetNodeParams {
   id: number;
@@ -122,8 +119,7 @@ app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
     const { q } = req.query;
     const queryEmbedding = await embed(q);
     const results = await nodeRepo.search(queryEmbedding);
-    const titles = results.map((node) => `- ${node.toDTO().title}`).join('\n');
-    const input = `
+    /*     const input = `
     Given the following list of documents, and query, you must
     answer the question, or summarise the docs depending on the tone.
     ----
@@ -133,13 +129,12 @@ app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
     QUERY:
     ${q}
     `;
-    console.log(input);
     const stream = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [{ role: 'user', content: input }],
       stream: true,
-    });
-
+    }); */
+    const stream = await summariseOrAnswerFromDocuments(results, q);
     res.raw.writeHead(200, { 'Content-Type': 'text/plain' });
     for await (const part of stream) {
       res.raw.write(part.choices[0]?.delta?.content || '');

@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-
+import { Node } from './node';
 const openai = new OpenAI();
 
 const generateTitle = async (text: string): Promise<string> => {
@@ -44,4 +44,24 @@ const generateTitle = async (text: string): Promise<string> => {
   return title;
 };
 
-export { generateTitle };
+const summariseOrAnswerFromDocuments = async (nodes: Node[], query: string) => {
+  const titles = nodes.map((node) => `- ${node.toDTO().title}`).join('\n');
+  const input = `
+  Given the following list of documents, and query, you must
+  answer the question, or summarise the docs depending on the tone.
+  ----
+  DOCUMENTS:
+  ${titles}
+  ----
+  QUERY:
+  ${query}
+  `;
+  const stream = await openai.chat.completions.create({
+    model: 'gpt-3.5-turbo',
+    messages: [{ role: 'user', content: input }],
+    stream: true,
+  });
+  return stream;
+};
+
+export { generateTitle, summariseOrAnswerFromDocuments };
