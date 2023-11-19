@@ -27,6 +27,7 @@ jobs:
       - name: Setup GCP Auth
         uses: google-github-actions/auth@v1
         with:
+          project_id: kg1-prod-405611
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           export_environment_variables: true
 
@@ -38,10 +39,8 @@ jobs:
           install_components: beta
 
       - name: GCP Build Container
-        #run: |
-        #  gcloud builds submit . \
-        #    --tag gcr.io/kg1-prod/kg1-backend
-        run: gcloud builds submit --tag europe-docker.pkg.dev/kg1-prod/eu.gcr.io/kg1-backend
+        run: gcloud builds submit . --tag gcr.io/kg1-prod/kg1-backend
+        #run: gcloud builds submit . --tag europe-docker.pkg.dev/kg1-prod/eu.gcr.io/kg1-backend
 
       - name: GCP Deploy Container
         run: |
