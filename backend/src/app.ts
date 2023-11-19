@@ -67,7 +67,6 @@ app.post<{ Body: PostNodeBody }>('/nodes', async (req, res) => {
     }
   };
 
-  // Process each node recursively
   for (const node of nodes) {
     await processNode(node);
   }
@@ -96,16 +95,21 @@ app.get('/nodes', async () => {
 });
 
 app.get<{ Querystring: GetSearchParams }>('/search', async (req, res) => {
-  const counter = await nodeRepo.incrementOpenAiCounter();
-  if (counter >= OPENAI_API_CALL_LIMIT) {
-    return res.status(429).send({
-      message: `The API call limit of ${OPENAI_API_CALL_LIMIT} has been exhausted.`,
-    });
+  try {
+    const counter = await nodeRepo.incrementOpenAiCounter();
+    if (counter >= OPENAI_API_CALL_LIMIT) {
+      return res.status(429).send({
+        message: `The API call limit of ${OPENAI_API_CALL_LIMIT} has been exhausted.`,
+      });
+    }
+    const { q } = req.query;
+    const queryEmbedding = await embed(q);
+    const results = await nodeRepo.search(queryEmbedding);
+    return results.map((node) => ({ ...node.toDTO() }));
+  } catch (err) {
+    app.log.error(err);
+    res.status(500);
   }
-  const { q } = req.query;
-  const queryEmbedding = await embed(q);
-  const results = await nodeRepo.search(queryEmbedding);
-  return results.map((node) => ({ ...node.toDTO() }));
 });
 
 app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
@@ -119,21 +123,6 @@ app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
     const { q } = req.query;
     const queryEmbedding = await embed(q);
     const results = await nodeRepo.search(queryEmbedding);
-    /*     const input = `
-    Given the following list of documents, and query, you must
-    answer the question, or summarise the docs depending on the tone.
-    ----
-    DOCUMENTS:
-    ${titles}
-    ----
-    QUERY:
-    ${q}
-    `;
-    const stream = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [{ role: 'user', content: input }],
-      stream: true,
-    }); */
     const stream = await summariseOrAnswerFromDocuments(results, q);
     res.raw.writeHead(200, { 'Content-Type': 'text/plain' });
     for await (const part of stream) {
@@ -141,7 +130,7 @@ app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
     }
     return res.raw.end();
   } catch (err) {
-    console.log(err);
+    app.log.error(err);
     res.raw.end('Error sending chat stream.');
   }
 });
