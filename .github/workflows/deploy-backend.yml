@@ -38,7 +38,10 @@ jobs:
           install_components: beta
 
       - name: GCP Build Container
-        run: gcloud builds submit --tag gcr.io/kg1-prod/kg1-backend
+        run: |
+          gcloud builds submit . \
+            --tag gcr.io/kg1-prod/kg1-backend
+        #run: gcloud builds submit --tag europe-docker.pkg.dev/kg1-prod/eu.gcr.io/kg1-backend
 
       - name: GCP Deploy Container
         run: |
