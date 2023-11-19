@@ -50,7 +50,7 @@ jobs:
             --source . \
             --allow-unauthenticated \
             --max-instances 1 \
-            --project kg1-prod \
+            --project ${{ env.GCP_PROJECT }} \
             --region ${{ env.GCP_REGION }} \
             --set-env-vars OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
             --set-env-vars "DATABASE_URL=${{ secrets.DATABASE_URL }}" \
