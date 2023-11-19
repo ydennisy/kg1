@@ -1,29 +1,31 @@
-Allowed inputs:
+# Scratch
 
-- a single link
-- a note (.md, .txt, both?)
-- a note with links inside
+This is a page to throw ideas, refs, etc and delete as soon as possible.
 
-In the first case no edges are created.
-In the second case no edges are created.
-In the third case we have the note as the parent and n children created, where n equals the number of links parsed.
+## ideas
 
-Parser will extract title, if inside of frontmatter.
-Parser will split out frontmatter from the main body.
+- check out ra-dit paper, and its references
+- we can have kg1 run locally, so all data is local, but a ActivityPub stream has things published and displayed centrally
+- this would be a nice local + social
+- would also allow to use DBs locally cheaper.
 
+## references
+
+- https://github.com/pgvector/pgvector-node#prisma
+- https://github.com/langchain-ai/langchainjs/blob/54d9f92/langchain/src/vectorstores/prisma.ts#L130
+- https://supabase.com/docs/guides/ai
+- https://supabase.com/blog/hugging-face-supabase
+- https://supabase.com/partners/integrations/prisma
+- https://supabase.com/blog/openai-embeddings-postgres-vector
 - https://github.com/withastro/astro/blob/main/packages/markdown/remark/package.json
 - https://github.com/remarkjs/remark#example-support-for-gfm-and-frontmatter
 - https://github.com/remarkjs/remark-frontmatter/blob/main/lib/index.js
 
-inspiration
+## inspiration
 
-- https://github.com/danswer-ai/danswer
-- https://github.com/pathwaycom/llm-app
-- https://ts.llamaindex.ai/
-- https://js.langchain.com/docs/get_started/introduction
-
-ideas
-- check out ra-dit paper, and its references
-- we can have kg1 run locally, so all data is local, but a ActivityPub stream has things published and displayed centrally
-- this would be a nice local + social 
-- would also allow to use DBs locally cheaper.
+- [SeaGOAT](https://github.com/kantord/SeaGOAT)
+- [lotion]https://github.com/Dashibase/lotion
+- [danswer]https://github.com/danswer-ai/danswer
+- [llm-app]https://github.com/pathwaycom/llm-app
+- [llama-index]https://ts.llamaindex.ai/
+- [lang-chain]https://js.langchain.com/docs/get_started/introduction
