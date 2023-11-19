@@ -24,12 +24,29 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
-      - name: Deploy to GCP Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v1
+      - name: Setup Google Cloud
+        uses: google-github-actions/setup-gcloud@v1
         with:
-          service: kg1-backend
-          source: .
-          region: europe-west1
+          version: latest
+          project_id: kg1-prod
+          install_components: beta
 
-      - name: "Deployed URL"
-        run: 'curl "${{ steps.deploy.outputs.url }}"'
+      #- name: Deploy to GCP Cloud Run
+      #  uses: google-github-actions/deploy-cloudrun@v1
+      #  with:
+      #    service: kg1-backend
+      #    source: .
+      #    region: europe-west1
+
+      #- name: "Deployed URL"
+      #  run: 'curl "${{ steps.deploy.outputs.url }}"'
+
+      - name: "GCP Build Container"
+        run: gcloud builds submit --tag eu.gcr.io/kg1-prod/kg1-backend
+
+      - name: "GCP Build Container"
+        run: |
+          gcloud run deploy kg1-backend \
+            --image eu.gcr.io/kg1-prod/kg1-backend \
+            --project kg1-prod \
+            --region europe-west1
