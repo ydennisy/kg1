@@ -13,7 +13,7 @@ defaults:
     working-directory: cli
 
 jobs:
-  migrate:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
