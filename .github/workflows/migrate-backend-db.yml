@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL }}
+      DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
 
     steps:
       - name: Checkout

@@ -52,6 +52,6 @@ jobs:
             --region ${{ env.GCP_REGION }} \
             --set-env-vars OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
             --set-env-vars DATABASE_URL=${{ secrets.DATABASE_URL }} \
-            --set-env-vars DATABASE_DIRECT_URL=${{ secrets.DATABASE_DIRECT_URL }} \
+            --set-env-vars DATABASE_URL_DIRECT=${{ secrets.DATABASE_URL_DIRECT }} \
             --set-env-vars OPENAI_API_CALL_LIMIT=1000 \
             --set-env-vars NODE_COUNT_LIMIT=10000
