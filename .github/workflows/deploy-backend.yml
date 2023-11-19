@@ -38,13 +38,13 @@ jobs:
           project_id: kg1-prod-405611
           install_components: beta
 
-      - name: GCP Build Container
-        #run: gcloud builds submit . --tag gcr.io/kg1-prod/kg1-backend
-        run: gcloud builds submit . --tag europe-docker.pkg.dev/kg1-prod/eu.gcr.io/kg1-backend
-
+      #- name: GCP Build Container
+      #run: gcloud builds submit . --tag gcr.io/kg1-prod/kg1-backend
+      #run: gcloud builds submit . --tag europe-docker.pkg.dev/kg1-prod/eu.gcr.io/kg1-backend
       - name: GCP Deploy Container
-        run: |
-          gcloud run deploy kg1-backend \
-            --image gcr.io/kg1-prod/kg1-backend \
-            --project kg1-prod \
-            --region europe-west1
+        run: gcloud run deploy kg1-backend --source . --region europe-west1
+        #run: |
+        #  gcloud run deploy kg1-backend \
+        #    #--image gcr.io/kg1-prod/kg1-backend \
+        #    --project kg1-prod \
+        #    --region europe-west1
