@@ -13,6 +13,4 @@ RUN apt-get update -y && apt-get install -y openssl && \
     npm run build && \
     npm prune --production
 
-EXPOSE 8080
-
 CMD [ "npm", "start" ]
