@@ -6,6 +6,7 @@ RUN npm ci
 
 COPY src/ ./
 COPY prisma/ ./
+COPY tsconfig.json ./
 
 RUN apt-get update -y && apt-get install -y openssl && \
     npx prisma generate && \
