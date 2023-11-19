@@ -23,7 +23,7 @@ interface PostNodeBody {
 }
 
 const app = Fastify({
-  logger: false,
+  logger: true,
 });
 
 const OPENAI_API_CALL_LIMIT = Number(process.env.OPENAI_API_CALL_LIMIT);
