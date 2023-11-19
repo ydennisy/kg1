@@ -26,7 +26,8 @@ const app = Fastify({
   logger: false,
 });
 
-const API_CALL_LIMIT = 3;
+const OPENAI_API_CALL_LIMIT = Number(process.env.OPENAI_API_CALL_LIMIT);
+const NODE_COUNT_LIMIT = Number(process.env.NODE_COUNT_LIMIT);
 
 const prisma = new PrismaClient();
 const nodeRepo = new PrismaNodeRepo(prisma);
@@ -35,7 +36,14 @@ app.get('/health', async () => {
   return { status: 'OK' };
 });
 
-app.post<{ Body: PostNodeBody }>('/nodes', async (req, _) => {
+app.post<{ Body: PostNodeBody }>('/nodes', async (req, res) => {
+  const nodesInDb = await nodeRepo.getNodesCount();
+  if (nodesInDb >= NODE_COUNT_LIMIT) {
+    return res.status(429).send({
+      message: `The Node limit of ${NODE_COUNT_LIMIT} has been exhausted.`,
+    });
+  }
+
   const { raw } = req.body;
   if (!raw && typeof raw === 'string' && raw.length > 5) {
     throw new Error('400 - Raw must be present as a string of > 5 chars.');
@@ -92,9 +100,9 @@ app.get('/nodes', async () => {
 
 app.get<{ Querystring: GetSearchParams }>('/search', async (req, res) => {
   const counter = await nodeRepo.incrementOpenAiCounter();
-  if (counter >= API_CALL_LIMIT) {
+  if (counter >= OPENAI_API_CALL_LIMIT) {
     return res.status(429).send({
-      message: `The API call limit of ${API_CALL_LIMIT} has been exhausted.`,
+      message: `The API call limit of ${OPENAI_API_CALL_LIMIT} has been exhausted.`,
     });
   }
   const { q } = req.query;
@@ -106,9 +114,9 @@ app.get<{ Querystring: GetSearchParams }>('/search', async (req, res) => {
 app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
   try {
     const counter = await nodeRepo.incrementOpenAiCounter();
-    if (counter >= API_CALL_LIMIT) {
+    if (counter >= OPENAI_API_CALL_LIMIT) {
       return res.status(429).send({
-        message: `The API call limit of ${API_CALL_LIMIT} has been exhausted.`,
+        message: `The API call limit of ${OPENAI_API_CALL_LIMIT} has been exhausted.`,
       });
     }
     const { q } = req.query;

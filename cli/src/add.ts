@@ -11,23 +11,25 @@ const BASE_URL = process.env.BASE_URL;
 
 const add = async (raw: string): Promise<void> => {
   try {
-    const { data, status, statusText } = await axios.post<Node[]>(
-      `${BASE_URL}/nodes`,
-      {
-        raw,
-      },
-    );
-    if (status === 200) {
-      console.log(`✅ ${chalk.green('Succesfully added node(s).')}`);
-      console.log();
-      console.table(data);
+    const { data } = await axios.post<Node[]>(`${BASE_URL}/nodes`, {
+      raw,
+    });
+
+    console.log(`✅ ${chalk.green('Succesfully added node(s).')}`);
+    console.log();
+    console.table(data);
+  } catch (err: any) {
+    if (err.response && err.response.status) {
+      console.error(
+        `❌ ${chalk.red('Failed to add node(s).')} | ${err.response.status} | ${
+          err.response.data.message
+        }`,
+      );
     } else {
       console.error(
-        `❌ ${chalk.red('Failed to add node(s).')} | ${status} ${statusText}`,
+        `❌ ${chalk.red('Failed to add node(s).')} | ${String(err)}`,
       );
     }
-  } catch (err) {
-    console.error(`❌ ${chalk.red('Failed to add node(s).')} | ${String(err)}`);
   }
 };
 

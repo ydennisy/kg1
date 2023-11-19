@@ -1,4 +1,4 @@
-# KG1
+# `KG1-Backend`
 
 Supabase studio: http://localhost:54323
 

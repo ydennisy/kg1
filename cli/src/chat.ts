@@ -1,4 +1,5 @@
 import axios from 'axios';
+import chalk from 'chalk';
 
 const BASE_URL = process.env.BASE_URL;
 
@@ -9,9 +10,14 @@ const chat = async (query: string) => {
       url: `${BASE_URL}/chat?q=${query}`,
       responseType: 'stream',
     });
-
+    let isFirstDataEvent = true;
     data.on('data', (data: any) => {
-      process.stdout.write(data.toString());
+      if (isFirstDataEvent) {
+        process.stdout.write('🤖 ' + data.toString());
+        isFirstDataEvent = false;
+      } else {
+        process.stdout.write(data.toString());
+      }
     });
 
     data.on('error', (err: any) => {
@@ -32,7 +38,11 @@ const chat = async (query: string) => {
         })
         .on('end', () => {
           const error = JSON.parse(errorMessage);
-          console.error(`${error.message} | ${err.response.status}`);
+          console.error(
+            `❌ ${chalk.red('Failed to add node(s).')} | ${
+              err.response.status
+            } | ${error.message}`,
+          );
         });
       return;
     } else {

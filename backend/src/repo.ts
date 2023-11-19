@@ -109,6 +109,11 @@ export class PrismaNodeRepo implements NodeRepo {
     return updatedCounter.value;
   }
 
+  public async getNodesCount(): Promise<number> {
+    const count = await this.prisma.node.count();
+    return count;
+  }
+
   private async setEmbedding(id: number, embedding: number[]): Promise<void> {
     if (!embedding) {
       throw new Error('When setting embedding it cannot be undefined.');
