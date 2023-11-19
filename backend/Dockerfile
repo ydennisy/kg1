@@ -4,7 +4,7 @@ COPY package*.json .
 
 RUN npm ci
 
-COPY src/ .
+COPY src/ ./
 
 RUN npx prisma generate && \
     npm run build && \
