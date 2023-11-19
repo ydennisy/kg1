@@ -30,3 +30,6 @@ jobs:
           service: kg1-backend
           source: .
           region: europe-west1
+
+      - name: "Deployed URL"
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
