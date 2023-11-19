@@ -48,6 +48,8 @@ jobs:
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
             --source . \
+            --allow-unauthenticated \
+            --max-instances 1 \
             --project ${{ env.GCP_PROJECT }} \
             --region ${{ env.GCP_REGION }} \
             --set-env-vars OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
