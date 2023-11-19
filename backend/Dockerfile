@@ -1,5 +1,8 @@
 FROM node:20-slim
 
+ENV PORT 8080
+ENV HOSTNAME "0.0.0.0"
+
 COPY package*.json ./
 
 RUN npm ci
