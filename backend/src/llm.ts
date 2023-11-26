@@ -1,5 +1,6 @@
 import OpenAI from 'openai';
-import { Node } from './node';
+import { SearchResultRow } from './repo';
+
 const openai = new OpenAI();
 
 const generateTitle = async (text: string): Promise<string> => {
@@ -44,8 +45,11 @@ const generateTitle = async (text: string): Promise<string> => {
   return title;
 };
 
-const summariseOrAnswerFromDocuments = async (nodes: Node[], query: string) => {
-  const titles = nodes.map((node) => `- ${node.toDTO().title}`).join('\n');
+const summariseOrAnswerFromDocuments = async (
+  rows: SearchResultRow[],
+  query: string,
+) => {
+  const titles = rows.map((row) => `- ${row.title}`).join('\n');
   const input = `
   Given the following list of documents, and query, you must
   answer the question, or summarise the docs depending on the tone.

@@ -8,52 +8,41 @@ datasource db {
   directUrl = env("DATABASE_URL_DIRECT")
 }
 
-model Node {
-  id           Int                          @id @default(autoincrement())
-  createdAt    DateTime                     @default(now()) @map("created_at")
-  updatedAt    DateTime                     @updatedAt @map("updated_at")
-  raw          String
-  title        String?
-  type         NodeType
-  embedding    Unsupported("vector(1536)")?
-  nodeParents  Edge[]                       @relation("child_to_parent")
-  nodeChildren Edge[]                       @relation("parent_to_child")
-  note         Note?
-  webPage      WebPage?
-
-  @@index(id)
-  @@map("nodes")
-}
-
-model Edge {
-  id       Int  @id @default(autoincrement())
-  parent   Node @relation("parent_to_child", fields: [parentId], references: [id])
-  parentId Int  @map("parent_id")
-  child    Node @relation("child_to_parent", fields: [childId], references: [id])
-  childId  Int  @map("child_id")
-
-  @@unique([parentId, childId])
-  @@map("edges")
-}
-
 model WebPage {
-  id     Int    @id @default(autoincrement())
-  url    String
-  title  String
-  node   Node   @relation(fields: [nodeId], references: [id])
-  nodeId Int    @unique @map("node_id")
+  id        String                       @id
+  createdAt DateTime                     @default(now()) @map("created_at")
+  updatedAt DateTime                     @updatedAt @map("updated_at")
+  url       String
+  title     String
+  domain    String
+  content   String
+  embedding Unsupported("vector(1536)")?
 
   @@map("web_pages")
 }
 
 model Note {
-  id     Int    @id @default(autoincrement())
-  title  String
-  body   String
-  node   Node   @relation(fields: [nodeId], references: [id])
-  nodeId Int    @unique @map("node_id")
+  id        String                       @id
+  createdAt DateTime                     @default(now()) @map("created_at")
+  updatedAt DateTime                     @updatedAt @map("updated_at")
+  title     String
+  content   String
+  embedding Unsupported("vector(1536)")?
 
   @@map("notes")
+}
+
+model Paper {
+  id        String                       @id
+  createdAt DateTime                     @default(now()) @map("created_at")
+  updatedAt DateTime                     @updatedAt @map("updated_at")
+  title     String
+  author    String
+  url       String
+  content   String
+  embedding Unsupported("vector(1536)")?
+
+  @@map("papers")
 }
 
 model Counter {
@@ -62,9 +51,4 @@ model Counter {
   value Int
 
   @@map("counters")
-}
-
-enum NodeType {
-  NOTE
-  WEB_PAGE
 }
