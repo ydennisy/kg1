@@ -4,7 +4,9 @@ import chalk from 'chalk';
 interface SearchResultRow {
   id: string;
   title: string;
+  similarity: number;
   type: 'NOTE' | 'WEB_PAGE' | 'PAPER';
+  data: {};
 }
 
 const BASE_URL =
@@ -17,8 +19,12 @@ const search = async (q: string): Promise<void> => {
         q,
       },
     });
-    const nodes = data.reduce((acc, { id, ...x }) => {
-      acc[id] = x;
+    const nodes = data.reduce((acc, { id, data, ...rest }) => {
+      // const {content} = data;
+      acc[id] = {
+        ...rest,
+        //...data,
+      };
       return acc;
     }, {} as Record<string, object>);
 

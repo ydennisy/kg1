@@ -60,7 +60,7 @@ export class PrismaRepo implements Repo {
         SELECT 
           id, 
           'web_page' as type, 
-          jsonb_build_object('title', title, 'url', url) as data,
+          jsonb_build_object('title', title, 'url', url, 'content', content) as data,
           1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
         FROM web_pages 
         WHERE embedding IS NOT NULL
@@ -80,7 +80,7 @@ export class PrismaRepo implements Repo {
         SELECT 
           id, 
           'paper' as type, 
-          jsonb_build_object('title', title, 'content', content) as data,
+          jsonb_build_object('title', title, 'url', url, 'author', author, 'content', content) as data,
           1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
         FROM papers 
         WHERE embedding IS NOT NULL

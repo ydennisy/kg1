@@ -49,7 +49,9 @@ const summariseOrAnswerFromDocuments = async (
   rows: SearchResultRow[],
   query: string,
 ) => {
-  const titles = rows.map((row) => `- ${row.title}`).join('\n');
+  const titles = rows
+    .map((row) => `- ${row.title}: ${row.data?.content ?? ''}`)
+    .join('\n');
   const input = `
   Given the following list of documents, and query, you must
   answer the question, or summarise the docs depending on the tone.
@@ -60,6 +62,7 @@ const summariseOrAnswerFromDocuments = async (
   QUERY:
   ${query}
   `;
+  console.log(input);
   const stream = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
     messages: [{ role: 'user', content: input }],
