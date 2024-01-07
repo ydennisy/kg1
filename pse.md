@@ -1,0 +1,8 @@
+- https://github.com/HackerNews/API
+- https://github.com/lipoja/URLExtract
+- https://archive.readme.io/reference/website-snapshots
+- https://rsdoiel.github.io/blog/2023/03/07/prototyping-a-personal-search-engine.html
+- https://rsdoiel.github.io/blog/2023/03/10/first-prototype-pse.html
+- https://beepb00p.xyz/myinfra.html
+- https://beepb00p.xyz/tags.html#extendedmind
+- https://github.com/karlicoss/HPI
