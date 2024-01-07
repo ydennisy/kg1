@@ -2,9 +2,9 @@ import axios from 'axios';
 import chalk from 'chalk';
 
 interface Node {
-  id: number;
+  id: string;
   title: string;
-  type: 'NOTE' | 'WEB_PAGE';
+  type: 'NOTE' | 'WEB_PAGE' | 'PAPER';
 }
 
 const BASE_URL =
@@ -15,10 +15,14 @@ const add = async (raw: string): Promise<void> => {
     const { data } = await axios.post<Node[]>(`${BASE_URL}/nodes`, {
       raw,
     });
+    const nodes = data.reduce((acc, { id, ...x }) => {
+      acc[id] = x;
+      return acc;
+    }, {} as Record<string, object>);
 
     console.log(`✅ ${chalk.green('Succesfully added node(s).')}`);
     console.log();
-    console.table(data);
+    console.table(nodes);
   } catch (err: any) {
     if (err.response && err.response.status) {
       console.error(

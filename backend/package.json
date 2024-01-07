@@ -15,6 +15,7 @@
     "test": "tap run"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.6",
     "@types/node": "^20.6.3",
     "nodemon": "^3.0.1",
     "prisma": "^5.6.0",
@@ -23,10 +24,12 @@
     "typescript": "^5.2.2"
   },
   "dependencies": {
+    "@mozilla/readability": "^0.4.4",
     "@prisma/client": "^5.6.0",
     "entities": "^4.5.0",
     "fastify": "^4.24.3",
     "got-scraping": "^3.2.15",
+    "jsdom": "^22.1.0",
     "node-html-parser": "^6.1.10",
     "openai": "^4.15.0",
     "pgvector": "^0.1.5"

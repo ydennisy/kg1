@@ -1,15 +1,15 @@
 import Fastify from 'fastify';
 import { PrismaClient } from '@prisma/client';
-import { Node, NodeFactory } from './node';
-import { PrismaNodeRepo } from './repo';
+import { WebPage, Note } from './domain/entities';
+import { PrismaRepo } from './repo';
 import { parse } from './parser';
 import { embed } from './embedder';
 import { scrape } from './scraper';
 import { generateTitle, summariseOrAnswerFromDocuments } from './llm';
 
-interface GetNodeParams {
+/* interface GetNodeParams {
   id: number;
-}
+} */
 
 interface GetSearchParams {
   q: string;
@@ -27,94 +27,76 @@ const OPENAI_API_CALL_LIMIT = Number(process.env.OPENAI_API_CALL_LIMIT);
 const NODE_COUNT_LIMIT = Number(process.env.NODE_COUNT_LIMIT);
 
 const prisma = new PrismaClient();
-const nodeRepo = new PrismaNodeRepo(prisma);
+const repo = new PrismaRepo(prisma);
 
 app.get('/health', async () => {
   return { status: 'OK' };
 });
 
 app.post<{ Body: PostNodeBody }>('/nodes', async (req, res) => {
-  const nodesInDb = await nodeRepo.getNodesCount();
-  if (nodesInDb >= NODE_COUNT_LIMIT) {
-    return res.status(429).send({
-      message: `The Node limit of ${NODE_COUNT_LIMIT} has been exhausted.`,
-    });
-  }
+  try {
+    /*   const nodesInDb = await repo.getNodesCount();
+    if (nodesInDb >= NODE_COUNT_LIMIT) {
+      return res.status(429).send({
+        message: `The Node limit of ${NODE_COUNT_LIMIT} has been exhausted.`,
+      });
+    } */
 
-  const { raw } = req.body;
-  if (!raw && typeof raw === 'string' && raw.length > 5) {
-    throw new Error('400 - Raw must be present as a string of > 5 chars.');
-  }
-  const parserResult = parse(raw);
-  const nodes = NodeFactory.create(parserResult);
-
-  const processNode = async (node: Node) => {
-    if (node.type === 'WEB_PAGE') {
-      const title = (await scrape(node.raw)).title;
-      node.title = title;
+    const { raw } = req.body;
+    if (!raw && typeof raw === 'string' && raw.length > 5) {
+      throw new Error('400 - Raw must be present as a string of > 5 chars.');
     }
-    if (node.type === 'NOTE' && !node.title) {
-      const title = await generateTitle(node.raw);
-      node.title = title;
-    }
-    const embedding = await embed(node.text);
-    node.embedding = embedding;
-
-    if (node.children && node.children.length > 0) {
-      for (const childNode of node.children) {
-        await processNode(childNode);
+    const parsed = parse(raw);
+    const created = [];
+    for (const elem of parsed) {
+      if (elem.type === 'WEB_PAGE') {
+        const { raw: url } = elem;
+        const { title, content } = await scrape(url);
+        const embedding = await embed(title + ' ' + content);
+        const webPage = WebPage.create({ url, title, content, embedding });
+        created.push((await repo.createWebPage(webPage)).toDTO());
+      } else if (elem.type === 'NOTE') {
+        const { raw: content, title } = elem;
+        const titleOrGeneratedTitle = title ?? (await generateTitle(content));
+        const embedding = await embed(titleOrGeneratedTitle + ' ' + content);
+        const note = Note.create({
+          title: titleOrGeneratedTitle,
+          content,
+          embedding,
+        });
+        created.push((await repo.createNote(note)).toDTO());
+      } else {
+        throw new Error(`Unsupported input type: ${elem.type}`);
       }
     }
-  };
-
-  for (const node of nodes) {
-    await processNode(node);
+    return created;
+  } catch (err) {
+    app.log.error(err);
+    res.status(500).send();
   }
-
-  const persistedNodes = await nodeRepo.createMany(nodes);
-  // TODO: add proper error handling
-  const isNode = (value: any): value is Node => {
-    return value instanceof Node;
-  };
-  const validNodes = persistedNodes.filter(isNode);
-  return validNodes.map((node) => node.toDTO());
-});
-
-app.get<{ Params: GetNodeParams }>('/nodes/:id', async (req, res) => {
-  const { id } = req.params;
-  // TODO: adding fastify checks on inputs I assume
-  // would convert the ID to a number.
-  const node = await nodeRepo.findbyId(Number(id));
-  if (!node) return res.status(404).send();
-  return { ...node.toDTO() };
-});
-
-app.get('/nodes', async () => {
-  const nodes = await nodeRepo.findAll();
-  return nodes.map((node) => ({ ...node.toDTO() }));
 });
 
 app.get<{ Querystring: GetSearchParams }>('/search', async (req, res) => {
   try {
-    const counter = await nodeRepo.incrementOpenAiCounter();
+    /*     const counter = await repo.incrementOpenAiCounter();
     if (counter >= OPENAI_API_CALL_LIMIT) {
       return res.status(429).send({
         message: `The API call limit of ${OPENAI_API_CALL_LIMIT} has been exhausted.`,
       });
-    }
+    } */
     const { q } = req.query;
     const queryEmbedding = await embed(q);
-    const results = await nodeRepo.search(queryEmbedding);
-    return results.map((node) => ({ ...node.toDTO() }));
+    const results = await repo.search(queryEmbedding);
+    return results;
   } catch (err) {
     app.log.error(err);
-    res.status(500);
+    res.status(500).send();
   }
 });
 
 app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
   try {
-    const counter = await nodeRepo.incrementOpenAiCounter();
+    const counter = await repo.incrementOpenAiCounter();
     if (counter >= OPENAI_API_CALL_LIMIT) {
       return res.status(429).send({
         message: `The API call limit of ${OPENAI_API_CALL_LIMIT} has been exhausted.`,
@@ -122,7 +104,7 @@ app.get<{ Querystring: GetSearchParams }>('/chat', async (req, res) => {
     }
     const { q } = req.query;
     const queryEmbedding = await embed(q);
-    const results = await nodeRepo.search(queryEmbedding);
+    const results = await repo.search(queryEmbedding);
     const stream = await summariseOrAnswerFromDocuments(results, q);
     res.raw.writeHead(200, { 'Content-Type': 'text/plain' });
     for await (const part of stream) {

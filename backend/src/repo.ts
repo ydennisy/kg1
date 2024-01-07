@@ -1,125 +1,128 @@
-import { PrismaClient } from '@prisma/client';
 import pgvector from 'pgvector/utils';
-import { Node } from './node';
+import { PrismaClient } from '@prisma/client';
+import { Note, WebPage } from './domain/entities';
 
-export interface NodeRepo {
-  create(node: Node): Promise<Node>;
-  createMany(nodes: Node[]): Promise<(Node | Error)[]>;
-  findbyId(id: number): Promise<Node | null>;
-  findAll(): Promise<Node[]>;
+export type SearchResultRow = {
+  id: string;
+  title: string;
+  similarity: number;
+  data: { [key: string]: string };
+};
+
+export interface Repo {
+  search(embedding: number[]): Promise<SearchResultRow[]>;
+  createNote(input: Note): Promise<Note>;
+  createWebPage(input: WebPage): Promise<WebPage>;
+  //createMany(nodes: Node[]): Promise<(Node | Error)[]>;
+  //findbyId(id: number): Promise<Node | null>;
+  //findAll(): Promise<Node[]>;
 }
 
-export class PrismaNodeRepo implements NodeRepo {
+export class PrismaRepo implements Repo {
   private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
 
-  public async create(node: Node): Promise<Node> {
+  public async createNote(note: Note): Promise<Note> {
     try {
-      const { children, ...rest } = node.toPersistence();
-      const parentResult = await this.prisma.node.create({ data: { ...rest } });
-      await this.setEmbedding(parentResult.id, node.embedding);
-      const childResults = [];
-      if (children) {
-        for (const child of children) {
-          const { children: _, ...rest } = child.toPersistence();
-          const childResult = await this.prisma.node.create({
-            data: { ...rest },
-          });
-          await this.setEmbedding(childResult.id, child.embedding);
-          childResults.push(childResult);
-          await this.prisma.edge.create({
-            data: {
-              parent: {
-                connect: {
-                  id: parentResult.id,
-                },
-              },
-              child: {
-                connect: {
-                  id: childResult.id,
-                },
-              },
-            },
-          });
-        }
-      }
-
-      return Node.create({
-        ...parentResult,
-        children: childResults.map((node) => Node.create(node)),
+      const { embedding, ...rest } = note.toPersistence();
+      const result = await this.prisma.note.create({
+        data: { ...rest },
       });
+      await this.setEmbedding(result.id, 'notes', embedding);
+      return Note.create(result);
     } catch (err) {
       console.error(err);
-      throw new Error('Failed to persist node to database');
+      throw new Error('Failed to persist Note to the database.');
     }
   }
 
-  public async createMany(nodes: Node[]): Promise<(Node | Error)[]> {
-    const creationPromises = nodes.map((node) =>
-      this.create(node)
-        .then((result) => result)
-        .catch((error) => error),
-    );
-
-    const results = await Promise.allSettled(creationPromises);
-
-    return results.map((result) => {
-      if (result.status === 'fulfilled') {
-        return result.value;
-      } else {
-        return new Error(`Failed to create node: ${result.reason}`);
-      }
-    });
+  public async createWebPage(webPage: WebPage): Promise<WebPage> {
+    try {
+      const { embedding, ...rest } = webPage.toPersistence();
+      const result = await this.prisma.webPage.create({
+        data: { ...rest },
+      });
+      await this.setEmbedding(result.id, 'web_pages', embedding);
+      return WebPage.create(result);
+    } catch (err) {
+      console.error(err);
+      throw new Error('Failed to persist WebPage to the database.');
+    }
   }
 
-  public async findbyId(id: number): Promise<Node | null> {
-    const result = await this.prisma.node.findUnique({
-      where: { id },
-    });
-
-    return result ? Node.create(result) : null;
-  }
-
-  public async findAll(): Promise<Node[]> {
-    const results = await this.prisma.node.findMany();
-    return results.map((node) => Node.create(node));
-  }
-
-  public async search(queryEmbedding: number[]): Promise<Node[]> {
+  public async search(queryEmbedding: number[]): Promise<SearchResultRow[]> {
     const queryEmbeddingSql = pgvector.toSql(queryEmbedding);
-    const results = await this.prisma.$queryRaw`
-        SELECT id, type, title, 1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
-        FROM nodes 
+    return await this.prisma.$queryRaw<SearchResultRow[]>`
+      SELECT * FROM (
+        SELECT 
+          id, 
+          'web_page' as type, 
+          jsonb_build_object('title', title, 'url', url, 'content', content) as data,
+          1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
+        FROM web_pages 
         WHERE embedding IS NOT NULL
-        ORDER BY similarity DESC LIMIT 5`;
-    //@ts-ignore
-    return results.map((node) => Node.create(node));
+
+        UNION
+
+        SELECT 
+          id, 
+          'note' as type, 
+          jsonb_build_object('title', title, 'content', content) as data,
+          1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
+        FROM notes 
+        WHERE embedding IS NOT NULL
+
+        UNION
+
+        SELECT 
+          id, 
+          'paper' as type, 
+          jsonb_build_object('title', title, 'url', url, 'author', author, 'content', content) as data,
+          1 - (embedding <=> ${queryEmbeddingSql}::vector) AS similarity 
+        FROM papers 
+        WHERE embedding IS NOT NULL
+      ) AS combined_results
+      ORDER BY similarity DESC LIMIT 10`;
   }
 
   public async incrementOpenAiCounter(): Promise<number> {
-    const updatedCounter = await this.prisma.counter.update({
-      where: {
-        id: 1,
-      },
-      data: { value: { increment: 1 } },
-    });
-    return updatedCounter.value;
+    try {
+      const updatedCounter = await this.prisma.counter.update({
+        where: {
+          id: 1,
+        },
+        data: { value: { increment: 1 } },
+      });
+      return updatedCounter.value;
+    } catch (err) {
+      const counter = await this.prisma.counter.create({
+        data: { name: 'open-ai-api-call', value: 1 },
+      });
+      return counter.value;
+    }
   }
 
-  public async getNodesCount(): Promise<number> {
+  /*   public async getNodesCount(): Promise<number> {
     const count = await this.prisma.node.count();
     return count;
-  }
+  } */
 
-  private async setEmbedding(id: number, embedding: number[]): Promise<void> {
+  private async setEmbedding(
+    id: string,
+    table: string,
+    embedding?: number[],
+  ): Promise<void> {
+    // TODO: move this check higher up in the call chain.
+    // Prisma forces us to even consider this to be undefined...
     if (!embedding) {
       throw new Error('When setting embedding it cannot be undefined.');
     }
     const embeddingSql = pgvector.toSql(embedding);
-    await this.prisma
-      .$executeRaw`UPDATE nodes SET embedding = ${embeddingSql}::vector WHERE id = ${id}`;
+    // TODO: check table is one of allowed tables.
+    const query = `UPDATE ${table} SET embedding = $1::vector WHERE id = $2`;
+    await this.prisma.$executeRawUnsafe(query, embeddingSql, id);
   }
 }
