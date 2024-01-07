@@ -24,13 +24,8 @@ This is a page to throw ideas, refs, etc and delete as soon as possible.
 ## inspiration
 
 - [SeaGOAT](https://github.com/kantord/SeaGOAT)
-- [lotion](https://github.com/Dashibase/lotion)
-- [danswer](https://github.com/danswer-ai/danswer)
-- [llm-app](https://github.com/pathwaycom/llm-app)
-- [llama-index](https://ts.llamaindex.ai/)
-- [lang-chain](https://js.langchain.com/docs/get_started/introduction)
-- [Yacy](https://github.com/yacy/yacy_search_server)
-- [Verba](https://github.com/weaviate/Verba)
-- [ArchiveBox](https://github.com/ArchiveBox/ArchiveBox)
-- [PageFind](https://github.com/CloudCannon/pagefind)
-- [HPI](https://github.com/karlicoss/HPI)
+- [lotion]https://github.com/Dashibase/lotion
+- [danswer]https://github.com/danswer-ai/danswer
+- [llm-app]https://github.com/pathwaycom/llm-app
+- [llama-index]https://ts.llamaindex.ai/
+- [lang-chain]https://js.langchain.com/docs/get_started/introduction
