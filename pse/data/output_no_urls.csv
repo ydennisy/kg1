@@ -1,0 +1,237 @@
+subject,body,attachments,urls,url_count
+Model AI on cells,"Have a cell which can multiples
+It has I formation which it can update
+Environment in which it grows
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Pi Ai,"Everyone gets a PI
+They connect and train a federated AI
+We all own AI!!! Not just big corps.
+
+They can share updates and each learn something new!
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Idea: CRUDscript,"Database is part of programming language, no external dependencies are
+needed to build.
+
+This stops needing glue
+
+Native dockert
+",,[],0
+Spend more time thinking about the future,"Get books about this, but the key point is to form own ideas on future
+especially technology--
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+A special Docket from Shishir,"April 2021 
+ 
+ [Image ""image+%2815%29.png?expires=1620464400&amp;signature=ac67d7d1bc112b1b5ef4b1f7ef1b140c5c4b529883b5029fe39ac4045e4277f7""] Let’s talk about Golden Rituals. 
+ Last August, Reid Hoffman and I had a wide-ranging conversation on his Masters of Scale podcast. One of the topics we discussed was the idea of Golden Rituals and a framework from my friend and close advisor, Bing Gordon: 
+ Every company has a small list of Golden Rituals. A few criteria: (1) They are named. (2) Every employee knows them by their first Friday. (3) They are templated. 
+ We discussed the iconic examples — Amazon 6-pagers, Salesforce V2MOM, Google OKRs, etc. The most distinctive Golden Ritual at Coda is Dory and Pulse, our unique way of running meetings. This conversation turned into a fun project. I decided to meet as many teams as I could, and try to catalog “Rituals of Great Teams.” Since then I’ve talked to hundreds of teams — interviews, roundtable discussions, a survey or two, and lots of fun doc spelunking. As I met team after team and heard about both (a) the rituals they are proud of and (b) what they are hoping to learn from others, I found remarkable alignment. I’m working on publishing the collection of rituals soon, but for now, I’d like to highlight some of my early findings. 
+ 
+ —Shishir Mehrotra CEO and co-founder 
+ The Docket is Coda’s version of the staff picks shelf at your local bookstore. Every month, we recommend published docs that we’ve personally read, loved, and copied. In this special edition, all the recommendations are written and curated by our CEO and co-founder Shishir. See past installments here. 
+ [Image ""image+%2811%29.png?expires=1620464400&amp;signature=5bdb19b1e961897856972f3f1e7fc9169e39b6f0d656beefb75c993fe05ba35b""] 🚀 Rethinking Google’s famous LaunchCal
+ 
+ by Shiva Rajaraman, VP Product Facebook &amp; former CTO WeWork 
+ Many of Google’s iconic processes have spread throughout other companies (probably the most famous: John Doerr’s writeup on OKRs from Measure what Matters). In this doc, Shiva highlights another Google best practice - managing a Launch Calendar. Shiva is an icon of the tech industry - having held senior roles at Google, YouTube, Spotify, WeWork, and now Facebook - and has seen many companies struggle to scale their launch processes. He turned a complicated matrix of reviewers and initiatives into a steamlined playbook. This doc gives a peek into how Google navigated the matrix. 
+ 
+ [Image ""image+%2812%29.png?expires=1620464400&amp;signature=3e2e23f63482d44a191bae883d1b3bef2f6ca1aa3a7bcba754e1c5ad06252272""] 🎮 Gamestorming: Design meetings like you design apps
+ 
+ by Dave Mastronardi, CEO at Gamestorming Group 
+ I’ve found myself recommending Dave’s doc constantly. If you have ever looked for ways to make your meetings more productive, this is a must-read catalog of meeting rituals. The core observation is simple: great meetings are designed, much in the way products are designed. Sometimes you optimize for speed, sometimes for creativity, other times for inclusion, and so on — work backward from those goals and design your meetings. My favorite example in the doc is the 100 point challenge — we’ve adopted it as a commonly used ritual within our own team at Coda. 
+ 
+ [Image ""image+%2813%29.png?expires=1620464400&amp;signature=6c76be9b6e473c4ba71ca43a6c9736cb8920c5768ed7aa937a7e7e7ef1256908""] 🤝 5 ways to get the most out of one-on-ones
+ 
+ by Raechel Timme, Head of HR at Coda 
+ One of the most overlooked rituals on a team is how they handle employee-manager 1-on-1s. Our Head of HR, Raechel, is our resident thought-leader on how other teams run this process and has invented an amazing best practice toolkit. I’m sure for most people the 1-on-1 doc is what Raechel calls a “forever scroll” mega doc - full of 60 pages of notes broken up by date markers. Her template recognizes that every employee-manager relationship is unique and switches the process to break it up into key steps. My favorite part is the Partnership Agreement - it quickly became a staple of my own 1-1s. 
+ 
+ [Image ""image+%2814%29.png?expires=1620464400&amp;signature=e74babf00204160d59975b3148d0f557e75d8a882990e895fc6ea15d08520b55""] ⌛ A 4-step prioritised productivity guide
+ 
+ by Des Traynor, Intercom co-founder and CSO 
+ Few tools have impacted my personal productivity like this doc. Des’ doc started with a very popular tweet which said “Your email is what *others* think you should work on. Your to-do list is what *you* think you should work on. Your calendar is (usually) what you *actually* work on. How much do they overlap in your world?” Des transformed this insight into a toolkit that syncs your to-do list, email, and calendar into a single doc and then aligns the three every week with a simple workflow. It even gives you a score at the end. I’ve been running this system myself for over a year now, and I’ve discovered that any week where my “Des score” exceeds 50% is a good week for me. This was a humbling (and actionable!) observation — I only naturally have control over half my time, so it is very important to make the most of it! Want more docs? Explore our Doc Gallery. 
+ Trends in what’s trending. 
+ In my experience (and in the words of Bing Gordon), rituals are generally named and templated. The Doc Gallery’s most popular docs speak to the flexibility of rituals beyond these boundaries. 
+ 
+ 1. The Product School's PRD Template - A doc to quickly get your entire team on the same page. 
+2. Designing Coda's dark mode - Peek inside the design process behind a top-requested feature. 
+3. Return to Workplace Guide - A resource for making informed decisions as we again reshape the workplace. 
+4. Financial Planning Software - An evaluation system for sourcing your SaaS startup’s next finance tool. 
+5. The Marketing Team Starter Kit - A collection of free, time-saving templates for better workflows, cross-functional partnerships, and internal visibility. 
+ Lost and found. 
+ Not every great ritual is captured in a doc on the trending list. Some are simply stand-alone templates, building blocks composed in a way that makes life easier. Here are a few templates you probably aren’t using but should. 
+ 
+ 1. Alternating row colors table - Design a more convenient doc with this Excel-style readability hack. 
+2. Request an update button - Keep your doc fresh, with help from your team. 
+3. Namestorm - Make your next naming exercise a team effort. 
+4. Overdue task reminder - Put your polite pestering on autopilot with this table-Slack-Pack combo. 
+5. Customer success plan - Take the edge off of quarterly business reviews with a well-made hub for stakeholders. 
+ Find these templates and more in your Explore panel or with the / command. 
+ Need more? Why not try... 
+ ...this 2048 game doc from Shitong (Stone) Shou if you need a distraction, have burned through your jigsaw puzzle selection, or are just really into addition. 
+ ...this JT ThingShare doc from Nick Haffie-Emslie if you feel generous, are on speaking terms with your neighbors, or still feel the gaping hole left by your missing copy of The Count of Monte Cristo. 
+ ...this Random test doc from Alan Larsen if you are missing a pair of dice, often wonder if randomness truly exists, or thought statistics class was real a hoot.",,[],0
+AI Receipes,"One model:
+Title
+Recipe
+Image
+
+Then a pipeline to make receipes, 200 per day.
+Pushed to net lift.
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Top down learning,"NLP app
+NN
+Linear algebra
+
+Blog?
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Topic model of HN posts,"So people can select and listen to a feed of a few topics
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Can we crawl sites to train model to make high SEO sites???,"-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+"Fully autonomous publisher, what category?","-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Idea!!! Note taking app,"Subscription service, with physical notes which are digitised!!!
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+AI to write haikus,"-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+News Aggregator,"With some twist....
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Make KG ad a website,"Publish it online
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+CDT blog post,"Bad deal for pubs
+Better now context more important
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Sleep,"Wasm predict category
+Grapeshot style segment resolutions optimisation
+Mistakes in snippet
+Prepend segments with AG
+
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Append o my log,"Using s3 you can keep getting previous files in a scroll UI using the hash
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Fwd: The Most Important Attribute of Leadership According to Jack Welch,"
+
+Edu
+
+Begin forwarded message:
+
+> From: John Eades via LinkedIn <newsletters-noreply@linkedin.com>
+> Date: 2 March 2020 at 14:40:38 GMT
+> To: Eduardo Santos <edusantosuk@gmail.com>
+> Subject: The Most Important Attribute of Leadership According to Jack Welch
+> 
+> ﻿
+> 	
+> Eduardo Santos
+> 
+>  
+> NEWSLETTER ON LINKEDIN
+> Building the Best
+>  By John Eades
+> The Most Important Attribute of Leadership According to Jack Welch
+> 
+> The business world lost Jack Welch today, a great businessman, and professional who drastically evolved as a leader during his 84 years. Luckily he left behind some great leadership and management lessons.
+> 
+> During Welch's 20 year tenure at GE, he was able to increase the company's value by 4,000 percent, growing its market value from $12 billion to $410 billion. You could make an argument that this impact was one of the greatest achievements in the history of CEOs.
+> 
+> Here is where it gets interesting. Welch was considered by most to be a ruthless and a results-driven leader. So much so, he was nicknamed ""Neutron Jack"" because of his aggressive firing policy in the mid '80s (known as the ""vitality curve"").  
+> 
+> While the majority of organizations no longer use the ""vitality curve"" method, organizational leaders have learned from and implemented strategies from Welch's experience. A couple of years ago, I learned a leadership lesson from ""Neutron Jack"" that I never thought I would.
+> 
+> Tim Ferriss interviewed Frank Blake the Former CEO and Chairman of Home Depot (a great leader in his own right) and former direct report at GE to Jack Welch. During the interview, Blake recalled a story in which he asked Welch, ""Of all of the attributes of leadership, if you had to weigh them all and pick one, what is the single most important attribute of leadership?"" 
+> 
+> ""The single most important attribute of leadership is generosity."" - Jack Welch
+> Most people think of generosity in terms of money. But that isn't what Welch was suggesting at all. He was using the term to describe how important it is for leaders to be fueled by the success of others.
+> 
+> When you actually look deeper, generosity is defined as the quality of about being kind, understanding and not selfish. If you want to be a more generous leader here are a few ideas:
+> 
+> Model servant leadership.
+> Through all the interviews I have done on the ""Follow My Lead"" podcast and working with companies of all sizes to help improve the leadership skills of their people, I have come to define leadership in Building the Best this way.
+> 
+> Someone whose actions inspire, empower, and serve in order to ELEVATE OTHERS over an extended period of time.
+> Now it's one thing to know this definition, it's completely different to model it and live it out for your people every single day. Instead of waking up thinking about yourself, do your very best to think about your team.
+> 
+> Give of your time, not money.
+> One of my favorite quotes ever is from John Crudele about parenting, ""Kids spell love T-I-M-E."" If you want to be a more generous leader, start with giving more of your time. There is absolutely nothing you can do to replace the time you spend transferring knowledge and getting to know people one-on-one. By the time you spend with people, you might uncover money is needed, but let that be the last resort.
+> 
+> Seek out opportunities to fuel the success of others.
+> I believe with all my heart, leaders don't create followers but they create more leaders. So instead of hoarding the best talent on your team, seek out opportunities to help them advance in their career through new tasks, roles, or job functions. 
+> 
+> This means you will lose talented people to promotions or new opportunities. While it might hurt you in the short term, not only is it the right thing to do for someone else it will also attract more talented people to join you on the journey.
+> 
+> Those leaders who aren't doing these three things are being the opposite of a generous and will find themselves as part of the reason their team never reaches its full potential.  
+> 
+> How do you live out the attribute of generosity in your leadership approach?
+> 
+> Get the #1 Best New Management Book to Read by Book Authority: Building the Best: 8 Proven Leadership Principles to Elevate Others to Success is published by McGraw-Hill. Learn the stories, principles, and tools to help elevate the way you lead others.
+> 
+> What's Your Leadership Style? Join over 40k leaders and discover how well you are leveraging love and discipline as a leader and find out your current leadership style for free.
+> 
+> Join the Next Ultimate Leadership Academy If you are ready to elevate the way you lead, join the next virtual Ultimate Leadership Academy.
+> 
+> About the Author: John Eades is the CEO of LearnLoft, a leadership development company that exists to turn managers into leaders and create healthier places to work. He is currently booking events and speaking engagements for 2020. John was named one of LinkedIn’s 2017 Top Voices in Management & Workplace and was awarded the 2017 Readership Award by Training Industry.com. John is also the host of the “Follow My Lead” Podcast, a show that transfers stories and best practices from today’s leaders to the leaders of tomorrow. You follow him on Instagram @johngeades.  
+> 
+> Join the conversation
+>  
+> Know someone who might be interested in this newsletter? Share it with them.
+>    
+> Unsubscribe  |  Help
+> You are receiving LinkedIn notification emails.
+> This email was intended for Eduardo Santos (Owner at Sala Coffee). Learn why we included this.
+> 
+> © 2020 LinkedIn Ireland Unlimited Company, Wilton Plaza, Wilton Place, Dublin 2. LinkedIn is a registered business name of LinkedIn Ireland Unlimited Company. LinkedIn and the LinkedIn logo are registered trademarks of LinkedIn.
+",,[],0
+Rowles philosophy by stats or ML,"-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0
+Follow up to all sales interviews,"
+",,[],0
+Search into features URL,"
+",,[],0
+Display page features in extension,"
+",,[],0
+Create a site list from a search term.,"Auto upload to APN?
+-- 
+Best Regards,
+Dennis Yurkevich.
+",,[],0

@@ -1,0 +1,8 @@
+https://news.ycombinator.com/item?id=38407521 'content'
+https://verba.weaviate.io/document_explorer 'NoneType' object has no attribute 'string'
+https://github.com/tensorflow/similarity/blob/master/examples/multimodal_example.ipynb 'NoneType' object has no attribute 'string'
+https://news.ycombinator.com/item?id=37505687 'NoneType' object has no attribute 'string'
+https://news.ycombinator.com/item?id=37262440 'NoneType' object has no attribute 'string'
+https://twitter.com/jerryjliu0/status/1685078740555169793?s=51&t=WyGd4hqhhBIFsCP9lRaOcA 'NoneType' object has no attribute 'string'
+https://news.ycombinator.com/item?id=36890036 'content'
+https://news.ycombinator.com/item?id=38407521 'content'
