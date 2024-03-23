@@ -1,2 +1,0 @@
-- https://github.com/nuxt-modules/supabase/blob/main/demo/components/PageContainer.vue
-- https://github.com/nuxt-modules/tailwindcss/blob/main/playground/pages/index.vue
