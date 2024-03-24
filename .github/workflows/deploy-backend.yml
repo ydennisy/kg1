@@ -61,5 +61,5 @@ jobs:
             --region ${{ env.GCP_REGION }} \
             --set-env-vars OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
             --set-env-vars SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --set-env-vars SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}" \
+            --set-env-vars SUPABASE_KEY=${{ secrets.SUPABASE_KEY }} \
             --set-env-vars TOKENIZERS_PARALLELISM=false
