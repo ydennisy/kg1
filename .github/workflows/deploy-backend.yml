@@ -6,7 +6,7 @@ on:
     paths:
       - backend/**
 
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 defaults:
   run:
