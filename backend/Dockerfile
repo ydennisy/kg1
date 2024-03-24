@@ -7,8 +7,7 @@ WORKDIR /app
 
 COPY . ./
 
-RUN pip install --no-cache-dir torch==2.0.1 --index-url https://download.pytorch.org/whl/cpu && \
-    pip install --no-cache-dir pipenv==2023.12.1 && \
+RUN pip install --no-cache-dir pipenv==2023.12.1 && \
     pipenv requirements > requirements.txt && \
     pip install --no-cache-dir -r requirements.txt && \
     python -c 'from sentence_transformers import SentenceTransformer; SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts")'
