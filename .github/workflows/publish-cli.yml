@@ -1,11 +1,6 @@
 name: "[CLI] Publish to NPM"
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - cli/**
-
   workflow_dispatch:
 
 defaults:
