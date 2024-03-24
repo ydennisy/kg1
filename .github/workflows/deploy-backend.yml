@@ -41,6 +41,16 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install pipenv & create requirements.txt
+        run: |
+          pip install pipenv==2023.12.1
+          pipenv requirements > requirements.txt
+
       - name: Deploy Container to GCP
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
