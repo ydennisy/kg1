@@ -4,6 +4,11 @@ export default defineNuxtConfig({
   // srcDir: "src/",
   modules: ['@nuxtjs/tailwindcss'], // '@nuxtjs/supabase'
   css: ['~/assets/css/main.css'],
+  runtimeConfig: {
+    public: {
+      apiBase: '',
+    },
+  },
   routeRules: {
     '/*': { ssr: false },
     '/home': { static: true },

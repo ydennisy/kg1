@@ -6,13 +6,16 @@
 import md from 'markdown-it';
 
 const renderer = md();
-
 const input = ref('');
 const results = ref('');
 
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase;
 const chat = async () => {
   results.value = '';
-  const response = await fetch(`/api/ask?q=${encodeURIComponent(input.value)}`);
+  const response = await fetch(
+    `${apiBase}/api/ask?q=${encodeURIComponent(input.value)}`
+  );
   //@ts-ignore
   const reader = response.body.getReader();
   const decoder = new TextDecoder();

@@ -62,6 +62,7 @@ jobs:
       - name: Deploy Container to GCP
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image eu.gcr.io/${{ env.GCP_PROJECT }}/${{ env.SERVICE_NAME }} \
             --allow-unauthenticated \
             --memory 2Gi \
             --max-instances 1 \

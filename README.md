@@ -2,6 +2,9 @@
 
 KG1 is a personal knowledge management application.
 
+> [!IMPORTANT]  
+> This project is currently in a very early development/experimental stage. There are a lot of unimplemented/broken features at the moment. Contributions are welcome to help out with the progress!
+
 The long term vision is to satisfy the following main functions:
 
 - Do not worry about structure of your knowledge graph, just throw stuff in there.
