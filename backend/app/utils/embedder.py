@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 
-MODEL_PATH = "app/artefacts/sentence-transformers_all-MiniLM-L6-v2"
+MODEL_PATH = "app/artefacts/sentence-transformers/all-MiniLM-L6-v2"
 model = SentenceTransformer(MODEL_PATH)
 
 
