@@ -1,0 +1,3 @@
+<template>
+  <SignUp></SignUp>
+</template>

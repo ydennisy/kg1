@@ -34,3 +34,24 @@ This is a page to throw ideas, refs, etc and delete as soon as possible.
 - [ArchiveBox](https://github.com/ArchiveBox/ArchiveBox)
 - [PageFind](https://github.com/CloudCannon/pagefind)
 - [HPI](https://github.com/karlicoss/HPI)
+
+- https://github.com/ray-project/llm-applications/blob/main/notebooks/rag.ipynb
+- https://github.com/supabase/vecs
+- https://github.com/igorbenav/fastcrud
+- https://github.com/Kludex/fastapi-microservices
+- https://github.com/tiangolo/full-stack-fastapi-postgresql/
+- https://github.com/nuxt/hackernews/blob/master/layouts/default.vue
+
+todo:
+
+- add an admin flow, for different chunking (rechunking) strategies
+- use a google like UI for search
+- create a extension which allows to index from a right click in the browser - bitwarden extension has this.
+
+refs:
+
+- https://kuzudb.com/docusaurus/blog/llms-graphs-part-2/
+
+LOOK!!!!!!
+
+- https://www.askmarvin.ai/docs/interactive/assistants/
