@@ -3,6 +3,11 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 name = "pypi"
 
+[[source]]
+url = "https://download.pytorch.org/whl/cpu"
+verify_ssl = true
+name = "downloadpytorch"
+
 [packages]
 fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
@@ -20,6 +25,7 @@ pandas = "*"
 llama-index-readers-file = "*"
 httpx = "*"
 pymupdf = "*"
+torch = {version = "==2.0.1", index = "downloadpytorch"}
 
 [dev-packages]
 
