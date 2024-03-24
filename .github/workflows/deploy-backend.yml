@@ -46,10 +46,10 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install pipenv & create requirements.txt
-        run: |
-          pip install pipenv==2023.12.1
-          pipenv requirements > requirements.txt
+      # - name: Install pipenv & create requirements.txt
+      #   run: |
+      #     pip install pipenv==2023.12.1
+      #    pipenv requirements > requirements.txt
 
       - name: Build Container on GCP
         run: |
