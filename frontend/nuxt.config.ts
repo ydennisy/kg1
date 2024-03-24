@@ -11,7 +11,7 @@ export default defineNuxtConfig({
       proxy:
         process.env.NODE_ENV === 'development'
           ? 'http://127.0.0.1:8000/api/**'
-          : '/api/**',
+          : 'https://kg1-backend-j5dxapaafq-ew.a.run.app/api/**',
     },
     '/docs': {
       proxy: 'http://127.0.0.1:8000/docs',
