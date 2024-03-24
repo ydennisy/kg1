@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING
 from supabase import create_client
 
 if TYPE_CHECKING:
-    from backend.src.domain.node import TextNode
-    from src.domain import URL
+    from app.domain import TextNode
+    from app.domain import URL
 
 
 class DB:

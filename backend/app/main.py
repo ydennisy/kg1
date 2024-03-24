@@ -7,14 +7,14 @@ from dotenv import load_dotenv
 from supabase import create_client
 from pydantic import BaseModel
 
-from src.llm import answer_with_context
-from src.db import DB
-from src.utils import URLProcessor
-from src.utils import URLProcessingResult
-from src.utils import NodeChunker
-from src.utils import NodeEmbedder
-from src.domain import TextNode
-from src.domain import URL
+from app.llm import answer_with_context
+from app.db import DB
+from app.utils import URLProcessor
+from app.utils import URLProcessingResult
+from app.utils import NodeChunker
+from app.utils import NodeEmbedder
+from app.domain import TextNode
+from app.domain import URL
 
 load_dotenv()
 app = FastAPI()

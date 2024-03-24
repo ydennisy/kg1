@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from src.utils.uuid import uuid7
+from app.utils.uuid import uuid7
 
 if TYPE_CHECKING:
-    from src.utils.chunker import NodeChunker
-    from src.utils.embedder import NodeEmbedder
+    from app.utils.chunker import NodeChunker
+    from app.utils.embedder import NodeEmbedder
 
 
 class TextNodeChunk:

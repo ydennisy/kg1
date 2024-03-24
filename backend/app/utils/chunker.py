@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-from src.domain import TextNodeChunk
+from app.domain import TextNodeChunk
 
 CHUNK_SIZE = 512
 CHUNK_OVERLAP = 64

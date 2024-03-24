@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import TypedDict
 
-from src.utils.uuid import uuid7
+from app.utils.uuid import uuid7
 
 
 class URLStatus(Enum):

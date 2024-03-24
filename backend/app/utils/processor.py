@@ -15,7 +15,7 @@ import trafilatura
 from llama_index.readers.file import PyMuPDFReader
 
 if TYPE_CHECKING:
-    from src.domain import URL
+    from app.domain import URL
 
 pdf_loader = PyMuPDFReader()
 
