@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "KG1",
+  "version": "0.0.1",
+  "permissions": ["contextMenus", "activeTab"],
+  "host_permissions": ["*://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
+  }
+}

@@ -1,0 +1,27 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+supabase = "*"
+python-dotenv = "*"
+trafilatura = "*"
+lxml = "*"
+langchain = "*"
+sentence-transformers = "*"
+requests = "*"
+llama-index = "*"
+openai = "*"
+numpy = "*"
+pandas = "*"
+llama-index-readers-file = "*"
+httpx = "*"
+pymupdf = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
