@@ -51,11 +51,19 @@ jobs:
           pip install pipenv==2023.12.1
           pipenv requirements > requirements.txt
 
+      - name: Build Container on GCP
+        run: |
+          gcloud builds submit \
+            --project ${{ env.GCP_PROJECT }} \
+            --tag eu.gcr.io/${{ env.GCP_PROJECT }}/${{ env.SERVICE_NAME }} \
+            --region ${{ env.GCP_REGION }} \
+            --timeout 900
+
       - name: Deploy Container to GCP
         run: |
           gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --source . \
             --allow-unauthenticated \
+            --memory 2Gi \
             --max-instances 1 \
             --project ${{ env.GCP_PROJECT }} \
             --region ${{ env.GCP_REGION }} \
