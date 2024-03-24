@@ -11,6 +11,7 @@ const results = ref('');
 
 const config = useRuntimeConfig();
 const apiBase = config.public.apiBase;
+
 const chat = async () => {
   results.value = '';
   const response = await fetch(

@@ -2,6 +2,9 @@
 const input = ref('');
 const results = ref([]);
 
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase;
+
 const trimText = (text: string, maxChars: number = 1000) => {
   if (text.length > maxChars) {
     return `${text.substring(0, maxChars)}...`;
@@ -10,7 +13,7 @@ const trimText = (text: string, maxChars: number = 1000) => {
 };
 
 const search = async () => {
-  const result = await useFetch('/api/search', {
+  const result = await useFetch(`${apiBase}/api/search`, {
     method: 'GET',
     query: { q: input.value },
   });

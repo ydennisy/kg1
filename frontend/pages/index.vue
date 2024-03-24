@@ -6,9 +6,12 @@ const urlsCount = ref(0);
 const urls = ref();
 const indexingStatusMessage = ref('');
 
+const config = useRuntimeConfig();
+const apiBase = config.public.apiBase;
+
 const indexWebPages = async () => {
   indexingStatusMessage.value = 'Indexing...';
-  const result = await useFetch('/api/index', {
+  const result = await useFetch(`${apiBase}/api/index`, {
     method: 'POST',
     body: { urls: urls.value },
     headers: {
