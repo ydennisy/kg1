@@ -1,7 +1,8 @@
 from sentence_transformers import SentenceTransformer
 
-MODEL_PATH = "app/artefacts/models--sentence-transformers--all-MiniLM-L6-v2"
-model = SentenceTransformer(MODEL_PATH)
+#MODEL_PATH = "app/artefacts/models--sentence-transformers--all-MiniLM-L6-v2"
+#model = SentenceTransformer(MODEL_PATH)
+model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts")
 
 
 class NodeEmbedder:
