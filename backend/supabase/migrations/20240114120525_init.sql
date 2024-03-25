@@ -49,6 +49,24 @@ create index
     embedding vector_ip_ops
   );
 
+create table 
+  public.counter(
+    count integer not null default 0
+  );
+
+insert into counter(count) values (0);
+
+create or replace function update_counter()
+returns integer 
+language plpgsql
+as $$
+begin
+  update counter set count = count + 1;
+  return (select count from counter);
+end;
+$$;
+
+
 create or replace function search_chunks (
   query_embedding vector(384),
   --match_threshold float,

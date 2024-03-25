@@ -10,7 +10,8 @@ COPY . ./
 #RUN pip install --no-cache-dir pipenv==2023.12.1 && \
 #    pipenv requirements > requirements.txt && \
 #    pip install --no-cache-dir -r requirements.txt && \
-RUN pip install sentence-transformers && \
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir sentence-transformers && \
     python -c 'from sentence_transformers import SentenceTransformer; SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts")'
 
 CMD exec uvicorn app.main:app --host $HOST --port $PORT --workers 2
