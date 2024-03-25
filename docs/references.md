@@ -10,3 +10,4 @@
 - https://github.com/remarkjs/remark#example-support-for-gfm-and-frontmatter
 - https://github.com/remarkjs/remark-frontmatter/blob/main/lib/index.js
 - https://kuzudb.com/docusaurus/blog/llms-graphs-part-2/
+- https://github.com/tiangolo/full-stack-fastapi-template

@@ -14,6 +14,6 @@ RUN pip install --no-cache-dir pipenv==2023.12.1 && \
 
 RUN ls
 
-RUN cd artefacts && ls
+RUN cd app/artefacts && ls
 
 CMD exec uvicorn app.main:app --host $HOST --port $PORT --workers 2
