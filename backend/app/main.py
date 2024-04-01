@@ -3,6 +3,7 @@ from typing import List
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from supabase import create_client
 from pydantic import BaseModel
@@ -21,6 +22,20 @@ app = FastAPI()
 supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 db = DB()
 
+
+allowed_origins = [
+    "https://kg1.io",
+    "http://localhost",
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class PageCreate(BaseModel):
     urls: List[str]
