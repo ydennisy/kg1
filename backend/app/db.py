@@ -16,6 +16,10 @@ class DB:
             os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY")
         )
 
+    def increment_usage_counter(self) -> int:
+        result = self._client.rpc("update_usage_counter").execute()
+        return result.data
+
     def create_urls(self, urls: list[URL], user_id: str):
         data = [{**url.to_persistence(), "user_id": user_id} for url in urls]
         try:

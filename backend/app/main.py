@@ -57,6 +57,9 @@ async def get_search_route(q: str):
 
 @app.get("/api/ask")
 def get_ask_route(q: str):
+    usage_count = db.increment_usage_counter()
+    if usage_count > 1000:
+        return "Sorry, we have had to stop usage of the /ask endpoint due to API cost restrictions."
     query_emb = NodeEmbedder.embed(q, return_type="list")
     chunks = supabase.rpc(
         "search_chunks", {"query_embedding": query_emb, "top_n": 10}

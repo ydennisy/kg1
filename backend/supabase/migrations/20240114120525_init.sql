@@ -50,19 +50,20 @@ create index
   );
 
 create table 
-  public.counter(
+  public.usage_counter(
+    id text primary key,
     count integer not null default 0
   );
 
-insert into counter(count) values (0);
+insert into usage_counter(id, count) values ('openai-api', 0);
 
-create or replace function update_counter()
+create or replace function update_usage_counter()
 returns integer 
 language plpgsql
 as $$
 begin
-  update counter set count = count + 1;
-  return (select count from counter);
+  update usage_counter set count = count + 1 where id = 'openai-api';
+  return (select count from usage_counter where id = 'openai-api');
 end;
 $$;
 
