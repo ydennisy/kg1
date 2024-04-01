@@ -1,6 +1,7 @@
 # `KG1`
 
 KG1 is a knowledge management application, infused with AI.
+You can access a hosted version at [kg1.io](https://kg1.io).
 
 > [!WARNING]  
 > This project is currently in a very early development/experimental stage.
