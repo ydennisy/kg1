@@ -22,4 +22,9 @@ Not much really, currently this is a fairly based retrieval augment generation (
 - Search across all the indexed documents (URLs).
 - Ask question of the documents (RAG) using an LLM.
 
+Please take a look at the demo video below for the current state of the project or have a look
+for yourself at [kg1.io](https://kg1.io).
+
 ## Demo
+
+[![KG1 - Github - Video Demo](https://cdn.loom.com/sessions/thumbnails/b7276f09c3fd4f63b7bc359804a4c141-00001.gif)](https://www.loom.com/share/b7276f09c3fd4f63b7bc359804a4c141 "KG1 - Github - Video Demo")
