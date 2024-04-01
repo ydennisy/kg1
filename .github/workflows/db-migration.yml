@@ -3,6 +3,10 @@ name: "[DB] Run migrations"
 on:
   workflow_dispatch: {}
 
+defaults:
+  run:
+    working-directory: backend
+
 jobs:
   migration:
     runs-on: ubuntu-latest
