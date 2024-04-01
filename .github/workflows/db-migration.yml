@@ -1,0 +1,21 @@
+name: "[DB] Run migrations"
+
+on:
+  workflow_dispatch: {}
+
+env:
+  SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+  SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+  SUPABASE_PROJECT_ID: fqdoflohofjgariilbzh
+
+jobs:
+  migration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+
+      - run: |
+          supabase link --project-ref ${{ env.SUPABASE_PROJECT_ID }}
+          supabase db push
