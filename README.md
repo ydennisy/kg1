@@ -28,3 +28,5 @@ for yourself at [kg1.io](https://kg1.io).
 ## Demo
 
 [![KG1 - Github - Video Demo](https://cdn.loom.com/sessions/thumbnails/b7276f09c3fd4f63b7bc359804a4c141-00001.gif)](https://www.loom.com/share/b7276f09c3fd4f63b7bc359804a4c141 "KG1 - Github - Video Demo")
+
+<div style="position: relative; padding-bottom: 64.86486486486486%; height: 0;"><iframe src="https://www.loom.com/embed/b7276f09c3fd4f63b7bc359804a4c141?sid=bb05a654-7a6a-44e6-9cc5-7a9e6b2bf23b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
