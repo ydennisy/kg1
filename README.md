@@ -1,38 +1,24 @@
 # `KG1`
 
-KG1 is a personal knowledge management application.
+KG1 is a knowledge management application, infused with AI.
 
-> [!IMPORTANT]  
-> This project is currently in a very early development/experimental stage. There are a lot of unimplemented/broken features at the moment. Contributions are welcome to help out with the progress!
+> [!WARNING]  
+> This project is currently in a very early development/experimental stage.
+> Please do not rely on the hosted version, data cannot be considered "long-term persisted".
 
-The long term vision is to satisfy the following main functions:
+**The long term vision is of this project is to:**
 
-- Do not worry about structure of your knowledge graph, just throw stuff in there.
-- Social apps do not all have to be 2 second videos of cats, deep thoughts can also be fun to share.
-- Infuse the app with AI to help you store, find, reason and explore both your own and the world's knowledge!
+- Develop an abstract and general encoding of knowledge.
+- Connect knowledge nodes into a personal graph in an automated manner.
+- Allow people to connect their local sub graphs via a decentralised protocol.
+- Augment the knowledge in the graph through agentic assistance.
 
-Ok, but what can we do today?
+**Ok, but what can it do today?**
 
-Not much yet:
+Not much really, currently this is a fairly based retrieval augment generation (RAG) application, where you can:
 
-- You are able to add a `node`, which can be text, link or a combination.
-- You are able to search these using dense embeddings.
-- You can chat with an AI using the `nodes` stored in KG1 (RAG).
+- Index new documents (URLs).
+- Search across all the indexed documents (URLs).
+- Ask question of the documents (RAG) using an LLM.
 
-## Usage
-
-The current version is for bleeding edge early adopters!
-
-Install the CLI from NPM:
-
-```
-npm i kg1-cli -g
-```
-
-You can now use the CLI, locally to interact with KG1:
-
-```
-kg1 add "A new note about something which is very interesting!"
-kg1 search "how do racoons make love?"
-kg1 chat "why is the world flat?"
-```
+## Demo

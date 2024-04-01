@@ -26,3 +26,8 @@
 - https://beepb00p.xyz/tags.html#extendedmind
 - https://github.com/karlicoss/HPI
 - https://www.askmarvin.ai/docs/interactive/assistants/
+- https://github.com/Chainlit/chainlit
+- https://github.com/langroid/langroid/blob/main/examples/chainlit/chat-doc-qa.py
+- https://github.com/infiniflow/ragflow
+- https://docs.datastax.com/en/ragstack/docs/index.html
+- https://github.com/bclavie/RAGatouille

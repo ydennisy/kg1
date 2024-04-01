@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Generator, Any
 from openai import OpenAI
 
 client = OpenAI()
@@ -32,7 +32,7 @@ def format_chunks(chunks: List[dict]) -> str:
     return result
 
 
-def answer_with_context(chunks: List[dict], question: str) -> str:
+def answer_with_context(chunks: List[dict], question: str) -> Generator[str, Any, Any]:
     formatted_chunks = format_chunks(chunks)
     messages = [
         {
@@ -46,6 +46,7 @@ def answer_with_context(chunks: List[dict], question: str) -> str:
         messages=messages,
         model=MODEL,
         stream=True,
+        temperature=0,
     )
     for chunk in stream:
         content = chunk.choices[0].delta.content
@@ -55,3 +56,4 @@ def answer_with_context(chunks: List[dict], question: str) -> str:
             yield ""
         # yield chunk.choices[0].delta.content
     # return chat_completion.choices[0].message.content
+

@@ -44,7 +44,6 @@ const search = async () => {
     <thead class="bg-gray-200">
       <tr>
         <th class="rounded-tl-md py-2 px-4 text-left">Title</th>
-        <th class="py-2 px-4 text-left">Summary</th>
         <th class="rounded-tr-md py-2 px-4 text-left">Score</th>
       </tr>
     </thead>
@@ -62,16 +61,8 @@ const search = async () => {
             }}</a>
           </div>
         </td>
-        <td class="py-2 px-4 text-xs text-slate-600">
-          {{ item.summary }}
-        </td>
         <td class="py-2 px-4 text-sm text-slate-600">{{ item.score }}</td>
       </tr>
     </tbody>
   </table>
 </template>
-
-<style scoped>
-body {
-}
-</style>

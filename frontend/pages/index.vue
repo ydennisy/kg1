@@ -73,8 +73,3 @@ watch(input, (newValue) => {
     </button>
   </div>
 </template>
-
-<style scoped>
-.url-count {
-}
-</style>

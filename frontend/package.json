@@ -19,6 +19,6 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.18",
-    "markdown-it": "^14.0.0"
+    "markdown-it": "^14.1.0"
   }
 }

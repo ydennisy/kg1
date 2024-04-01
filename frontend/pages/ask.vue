@@ -1,8 +1,4 @@
 <script setup lang="ts">
-// TODO: bump @types/'markdown-it' when released
-// or we can downgrade.
-// Use as a plugin: https://github.com/nuxt-community/markdownit-module/issues/47
-//@ts-ignore
 import md from 'markdown-it';
 
 const renderer = md();
@@ -26,7 +22,6 @@ const chat = async () => {
     if (done) break;
 
     const textChunk = decoder.decode(value, { stream: true });
-    //@ts-ignore
     results.value += textChunk;
   }
 
