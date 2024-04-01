@@ -17,6 +17,6 @@ jobs:
       - uses: supabase/setup-cli@v1
 
       - run: |
-          supabase login
+          supabase login --token ${{ env.SUPABASE_ACCESS_TOKEN }}
           supabase link --project-ref ${{ env.SUPABASE_PROJECT_ID }}
           supabase db push
