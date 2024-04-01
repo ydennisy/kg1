@@ -1,4 +1,4 @@
-name: "[DB] Run migrations"
+name: "[DB] Run full reset"
 
 on:
   workflow_dispatch: {}
@@ -23,4 +23,4 @@ jobs:
           version: latest
 
       - run: supabase link --project-ref $SUPABASE_PROJECT_ID
-      - run: supabase db push
+      - run: supabase db reset
