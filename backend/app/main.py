@@ -80,18 +80,22 @@ async def post_index_route(payload: PageCreate):
 
         nodes = []
         for idx, processed_url in enumerate(processed_urls):
-            if isinstance(processed_url, URLProcessingResult):
-                text_node = TextNode(
-                    url=processed_url.url,
-                    url_feed_id=urls[idx].id,
-                    title=processed_url.title,
-                    text=processed_url.text,
-                )
-                text_node.create_chunks(NodeChunker)
-                text_node.create_embeddings(NodeEmbedder)
-                nodes.append(text_node)
-                urls[idx].set_indexing_success()
-            else:
+            try:
+                if isinstance(processed_url, URLProcessingResult):
+                    text_node = TextNode(
+                        url=processed_url.url,
+                        url_feed_id=urls[idx].id,
+                        title=processed_url.title,
+                        text=processed_url.text,
+                    )
+                    text_node.create_chunks(NodeChunker)
+                    text_node.create_embeddings(NodeEmbedder)
+                    nodes.append(text_node)
+                    urls[idx].set_indexing_success()
+                else:
+                    urls[idx].set_indexing_failure()
+            except Exception as ex:
+                print(ex)
                 urls[idx].set_indexing_failure()
 
         db.create_text_nodes(nodes)

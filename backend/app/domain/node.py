@@ -25,18 +25,26 @@ class TextNode:
         self.text = text
         self.embedding = None
         self.chunks: list[TextNodeChunk] = []
+        self.create_title_if_missing()
 
     def create_chunks(self, chunker: NodeChunker) -> None:
         self.chunks = chunker.chunk(self.id, self.text)
 
     def create_embeddings(self, embedder: NodeEmbedder) -> None:
-        texts = [self.url + self.title + self.text] + [
+        texts = [f"{self.url} {self.title} {self.text}"] + [
             chunk.text for chunk in self.chunks
         ]
         embeddings = embedder.embed(texts)
         self.embedding = embeddings[0].tolist()
         for chunk, embedding in zip(self.chunks, embeddings[1:]):
             chunk.embedding = embedding.tolist()
+
+    # TODO: this can be done using an LLM.
+    def create_title_if_missing(self) -> None:
+        if not self.title:
+            words = self.text.split()[:10]
+            title = f"{' '.join(words)}..."
+            self.title = title
 
     def to_persistence(self):
         text_node = {
