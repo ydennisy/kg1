@@ -50,6 +50,19 @@ useHead({ title: 'KG1 - AI powered KMS' });
     <footer class="bg-gray-800 text-white p-6">
       <div class="container mx-auto text-center">
         <h2 class="text-2xl font-semibold">Learn More</h2>
+        <div class="max-w-lg mx-auto py-8">
+          <a
+            href="https://www.loom.com/share/b7276f09c3fd4f63b7bc359804a4c141"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img
+              src="https://cdn.loom.com/sessions/thumbnails/b7276f09c3fd4f63b7bc359804a4c141-00001.gif"
+              class="w-full h-auto block"
+              alt="KG1 video demo thumbnail"
+            />
+          </a>
+        </div>
         <p class="mt-2">
           Follow progress on
           <a href="https://github.com/ydennisy/kg1" class="font-bold">Github</a>
