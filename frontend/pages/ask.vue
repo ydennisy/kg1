@@ -10,11 +10,20 @@ const apiBase = config.public.apiBase;
 
 const chat = async () => {
   results.value = '';
+  let isContextReceived = false;
+  let contextBuffer = '';
   const response = await fetch(
     `${apiBase}/api/ask?q=${encodeURIComponent(input.value)}`
   );
-  //@ts-ignore
-  const reader = response.body.getReader();
+  if (!response.ok) {
+    results.value = 'Sorry, an error occured, please try again.';
+    return;
+  }
+  const reader = response.body?.getReader();
+  if (!reader) {
+    results.value = 'Sorry, an error occured, please try again.';
+    return;
+  }
   const decoder = new TextDecoder();
 
   while (true) {
@@ -22,7 +31,18 @@ const chat = async () => {
     if (done) break;
 
     const textChunk = decoder.decode(value, { stream: true });
-    results.value += textChunk;
+
+    if (isContextReceived === false) {
+      contextBuffer += textChunk;
+      if (contextBuffer.includes('<END_OF_CONTEXT>')) {
+        const [contextChunks, ..._] = contextBuffer.split('<END_OF_CONTEXT>');
+        const { context } = JSON.parse(contextChunks);
+        console.log(context);
+        isContextReceived = true;
+      }
+    } else {
+      results.value += textChunk;
+    }
   }
 
   input.value = '';

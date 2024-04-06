@@ -1,4 +1,5 @@
 import os
+import json
 from typing import List
 
 from fastapi import FastAPI, HTTPException
@@ -65,8 +66,14 @@ def get_ask_route(q: str):
         "search_chunks", {"query_embedding": query_emb, "top_n": 10}
     ).execute()
     chunks = chunks.data
+
+    def generate_streaming_response():
+        yield json.dumps({"context": chunks}) + "<END_OF_CONTEXT>"
+        for part in answer_with_context(chunks=chunks, question=q):
+            yield part
+
     return StreamingResponse(
-        answer_with_context(chunks=chunks, question=q), media_type="text/plain"
+        generate_streaming_response(), media_type="text/plain"
     )
 
 
