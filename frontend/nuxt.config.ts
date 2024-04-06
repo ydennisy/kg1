@@ -10,7 +10,7 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
-    '/*': { ssr: false },
+    '/**': { ssr: false },
     '/home': { static: true },
     '/api/**': {
       proxy:
