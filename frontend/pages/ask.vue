@@ -2,29 +2,34 @@
 import md from 'markdown-it';
 
 const renderer = md();
-const input = ref('');
 const results = ref('');
 const context = ref([]);
+const isLoading = ref(false);
 
 const config = useRuntimeConfig();
 const apiBase = config.public.apiBase;
 
-const chat = async () => {
+const chat = async (query: string) => {
+  isLoading.value = true;
   results.value = '';
   context.value = [];
   let isContextReceived = false;
   let contextBuffer = '';
   const response = await fetch(
-    `${apiBase}/api/ask?q=${encodeURIComponent(input.value)}`
+    `${apiBase}/api/ask?q=${encodeURIComponent(query)}`
   );
+
   if (response.status === 404) {
     results.value =
       'Sorry, there are no relevant documents in the knowledge graph and I am not at liberty to answer based on my own opinions. Please [index](/index) some documents!';
+    isLoading.value = false;
     return;
   } else if (!response.ok) {
     results.value = 'Sorry, an unexpected error occured, please try again.';
+    isLoading.value = false;
     return;
   }
+
   const reader = response.body?.getReader();
   if (!reader) {
     results.value = 'Sorry, an unexpected error occured, please try again.';
@@ -51,22 +56,13 @@ const chat = async () => {
     }
   }
 
-  input.value = '';
+  isLoading.value = false;
 };
 </script>
 
 <template>
   <div>
-    <div class="relative mt-2 rounded-md">
-      <input
-        autofocus
-        v-model="input"
-        @keydown.enter="chat"
-        placeholder="How can I help?"
-        class="block w-full rounded-md border-0 py-3 pl-10 pr-20 text-gray-900 text-lg ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-1 focus:ring-inset focus:ring-indigo-600"
-      />
-      <div class="absolute inset-y-0 right-0 flex items-center"></div>
-    </div>
+    <SearchBar :is-loading="isLoading" @search="chat" />
     <div v-show="context.length > 0">
       <ContextViewer :chunks="context" />
     </div>

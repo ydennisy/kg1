@@ -6,10 +6,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from supabase import create_client
 from pydantic import BaseModel
 
-from app.llm import answer_with_context
+from app.llm import answer_with_context, summarise_text
 from app.db import DB
 from app.utils import URLProcessor
 from app.utils import URLProcessingResult
@@ -20,7 +19,6 @@ from app.domain import URL
 
 load_dotenv()
 app = FastAPI()
-supabase = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
 db = DB()
 
 
@@ -38,6 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class PageCreate(BaseModel):
     urls: List[str]
 
@@ -50,10 +49,8 @@ async def get_health():
 @app.get("/api/search")
 async def get_search_route(q: str):
     query_emb = NodeEmbedder.embed(q, return_type="list")
-    pages = supabase.rpc(
-        "search_pages", {"query_embedding": query_emb, "top_n": 10}
-    ).execute()
-    return pages.data
+    pages = db.search_pages(query_emb)
+    return pages
 
 
 @app.get("/api/ask")
@@ -62,25 +59,32 @@ def get_ask_route(q: str):
     if usage_count > 1000:
         return "Sorry, we have had to stop usage of the /ask endpoint due to API cost restrictions."
     query_emb = NodeEmbedder.embed(q, return_type="list")
-    chunks = supabase.rpc(
-        "search_chunks", {"query_embedding": query_emb, "top_n": 10}
-    ).execute()
-    chunks = chunks.data
+    chunks = db.search_chunks(query_emb)
 
     # NOTE: this is best moved into the DB query when we find the correct value.
     chunks = [c for c in chunks if c["score"] >= 0.4]
 
     if len(chunks) == 0:
-       raise HTTPException(404)
+        raise HTTPException(404)
 
     def generate_streaming_response():
         yield json.dumps({"context": chunks}) + "<END_OF_CONTEXT>"
         for part in answer_with_context(chunks=chunks, question=q):
             yield part
 
-    return StreamingResponse(
-        generate_streaming_response(), media_type="text/plain"
-    )
+    return StreamingResponse(generate_streaming_response(), media_type="text/plain")
+
+
+@app.get("/api/node")
+async def get_search_route(id: str):
+    node = db.get_text_node(id)
+    related_nodes = db.search_pages(node["embedding"], top_n=5)
+    summary = summarise_text(node["text"])
+    node["summary"] = summary
+    node["related"] = related_nodes
+    del node["text"]
+    del node["embedding"]
+    return node
 
 
 @app.post("/api/index")

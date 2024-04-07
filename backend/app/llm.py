@@ -54,6 +54,22 @@ def answer_with_context(chunks: List[dict], question: str) -> Generator[str, Any
             yield content
         else:
             yield ""
-        # yield chunk.choices[0].delta.content
-    # return chat_completion.choices[0].message.content
 
+
+def summarise_text(text: str) -> str:
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a article summary AI.",
+        },
+        {
+            "role": "user",
+            "content": f"Summarise the following ARTICLE, making sure to provide good depth, and cover all important topics. \n ARTICLE: \n {text}",
+        },
+    ]
+    result = client.chat.completions.create(
+        messages=messages,
+        model="gpt-3.5-turbo-16k",
+        temperature=0,
+    )
+    return result.choices[0].message.content

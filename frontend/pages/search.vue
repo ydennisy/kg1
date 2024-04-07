@@ -3,23 +3,22 @@ const input = ref('');
 const results = ref([]);
 
 const config = useRuntimeConfig();
-const apiBase = config.public.apiBase;
+const router = useRouter();
 
-const trimText = (text: string, maxChars: number = 1000) => {
-  if (text.length > maxChars) {
-    return `${text.substring(0, maxChars)}...`;
-  }
-  return text;
-};
+const apiBase = config.public.apiBase;
 
 const search = async () => {
   const result = await useFetch(`${apiBase}/api/search`, {
     method: 'GET',
     query: { q: input.value },
   });
-  //@ts-ignore
+  // @ts-ignore
   results.value = result.data.value;
   input.value = '';
+};
+
+const navigateToNode = (id: string) => {
+  router.push({ path: `/node`, query: { id: id } });
 };
 </script>
 
@@ -51,14 +50,20 @@ const search = async () => {
       <tr
         v-for="(item, index) in results"
         :key="index"
-        class="border-b border-slate-200"
+        class="border-b border-slate-200 hover:bg-gray-100 cursor-pointer"
+        @click="navigateToNode(item.id)"
       >
         <td class="py-2 px-4">
-          <div class="text-sm text-slate-600">{{ item.title }}</div>
-          <div>
-            <a :href="item.url" target="_blank" class="text-xs">{{
-              item.url
-            }}</a>
+          <div style="display: flex; align-items: center">
+            <span style="margin-right: 10px">➔</span>
+            <div>
+              <div class="text-sm text-slate-600">{{ item.title }}</div>
+              <div>
+                <a :href="item.url" target="_blank" class="text-xs" @click.stop>
+                  {{ item.url }}
+                </a>
+              </div>
+            </div>
           </div>
         </td>
         <td class="py-2 px-4 text-sm text-slate-600">{{ item.score }}</td>

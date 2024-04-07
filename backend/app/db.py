@@ -20,6 +20,33 @@ class DB:
         result = self._client.rpc("update_usage_counter").execute()
         return result.data
 
+    def search_pages(self, emb: list[float], top_n: int = 10):
+        data = self._client.rpc(
+            "search_pages", {"query_embedding": emb, "top_n": top_n}
+        ).execute()
+        return data.data
+
+    def search_chunks(self, emb: list[float], top_n: int = 10):
+        data = self._client.rpc(
+            "search_chunks", {"query_embedding": emb, "top_n": top_n}
+        ).execute()
+        return data.data
+
+    def get_text_node(self, id: str):
+        data = (
+            self._client.table("text_nodes")
+            .select("id, title, text, url, embedding")
+            .eq("id", id)
+            .execute()
+        )
+        return data.data[0]
+
+    def get_similar_text_nodes(self, id: str, top_n: int = 10):
+        data = self._client.rpc(
+            "get_similar_text_nodes", {"id": id, "top_n": top_n}
+        ).execute()
+        return data.data
+
     def create_urls(self, urls: list[URL], user_id: str):
         data = [{**url.to_persistence(), "user_id": user_id} for url in urls]
         try:
