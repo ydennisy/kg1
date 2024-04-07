@@ -1,11 +1,10 @@
 from datetime import datetime
 from sentence_transformers import SentenceTransformer
 
-# MODEL_PATH = "app/artefacts/models--sentence-transformers--all-MiniLM-L6-v2"
-# model = SentenceTransformer(MODEL_PATH)
-# sentence-transformers/all-MiniLM-L6-v2
-# tomaarsen/all-MiniLM-L6-v2
-# mixedbread-ai/mxbai-embed-large-v1
+# NOTE: alternative model options to be tested for embeddings.
+# sentence-transformers/all-MiniLM-L6-v2 (current)
+# tomaarsen/all-MiniLM-L6-v2 (loading speed)
+# mixedbread-ai/mxbai-embed-large-v1 (quality)
 
 model = None
 def load_model():
@@ -15,7 +14,6 @@ def load_model():
 def record_time(task, args=(), kwargs={}):
     start_time = datetime.now()
     task(*args, **kwargs)
-
     return datetime.now() - start_time
 
 print(f"Time taken to load embedding model: {record_time(load_model, )}")
