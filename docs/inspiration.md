@@ -31,3 +31,7 @@
 - https://github.com/infiniflow/ragflow
 - https://docs.datastax.com/en/ragstack/docs/index.html
 - https://github.com/bclavie/RAGatouille
+- https://github.com/metarank/metarank
+- https://github.com/yoheinakajima/instagraph
+- https://github.com/yoheinakajima/mindgraph
+- https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/
