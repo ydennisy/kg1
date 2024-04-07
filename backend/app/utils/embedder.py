@@ -7,14 +7,20 @@ from sentence_transformers import SentenceTransformer
 # mixedbread-ai/mxbai-embed-large-v1 (quality)
 
 model = None
+
+
 def load_model():
     global model
-    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts")
+    model = SentenceTransformer(
+        "sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts"
+    )
+
 
 def record_time(task, args=(), kwargs={}):
     start_time = datetime.now()
     task(*args, **kwargs)
     return datetime.now() - start_time
+
 
 print(f"Time taken to load embedding model: {record_time(load_model, )}")
 

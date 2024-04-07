@@ -29,3 +29,6 @@ https://www.uvicorn.org/deployment/
 use models which use safetensors for faster load
 https://huggingface.co/docs/diffusers/en/using-diffusers/using_safetensors
 https://huggingface.co/tomaarsen/all-MiniLM-L6-v2
+
+create graph viz using mermaid.js
+https://mermaid.js.org/syntax/mindmap.html
