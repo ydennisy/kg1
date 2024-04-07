@@ -1,4 +1,3 @@
-import os
 import json
 from typing import List
 
@@ -57,7 +56,9 @@ async def get_search_route(q: str):
 def get_ask_route(q: str):
     usage_count = db.increment_usage_counter()
     if usage_count > 1000:
-        return "Sorry, we have had to stop usage of the /ask endpoint due to API cost restrictions."
+        # TODO: handle this client side!
+        raise HTTPException(429)
+
     query_emb = NodeEmbedder.embed(q, return_type="list")
     chunks = db.search_chunks(query_emb)
 
@@ -77,6 +78,11 @@ def get_ask_route(q: str):
 
 @app.get("/api/node")
 async def get_search_route(id: str):
+    usage_count = db.increment_usage_counter()
+    if usage_count > 1000:
+        # TODO: handle this client side!
+        raise HTTPException(429)
+
     node = db.get_text_node(id)
     related_nodes = db.search_pages(node["embedding"], top_n=5)
     summary = summarise_text(node["text"])
