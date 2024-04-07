@@ -11,6 +11,7 @@ const apiBase = config.public.apiBase;
 
 const chat = async () => {
   results.value = '';
+  context.value = [];
   let isContextReceived = false;
   let contextBuffer = '';
   const response = await fetch(
