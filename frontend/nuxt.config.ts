@@ -10,8 +10,8 @@ export default defineNuxtConfig({
     },
   },
   routeRules: {
+    '/': { static: true },
     '/**': { ssr: false },
-    '/home': { static: true },
     '/api/**': {
       proxy:
         process.env.NODE_ENV === 'development'

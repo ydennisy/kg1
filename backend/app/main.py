@@ -67,6 +67,12 @@ def get_ask_route(q: str):
     ).execute()
     chunks = chunks.data
 
+    # NOTE: this is best moved into the DB query when we find the correct value.
+    chunks = [c for c in chunks if c["score"] >= 0.4]
+
+    if len(chunks) == 0:
+       raise HTTPException(404)
+
     def generate_streaming_response():
         yield json.dumps({"context": chunks}) + "<END_OF_CONTEXT>"
         for part in answer_with_context(chunks=chunks, question=q):

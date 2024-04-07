@@ -22,7 +22,7 @@ class NodeChunker:
     @staticmethod
     def chunk(node_id: str, node_text: str) -> list[TextNodeChunk]:
         chunks = text_splitter.create_documents(texts=[node_text])
-        texts = [c.page_content for c in chunks]
+        chunks = [c.page_content for c in chunks]
         return [
-            TextNodeChunk(text=text, text_node_id=node_id) for text in enumerate(texts)
+            TextNodeChunk(text=chunk, text_node_id=node_id) for chunk in chunks
         ]
