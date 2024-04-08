@@ -53,17 +53,21 @@ async def get_search_route(q: str):
 
 
 @app.get("/api/ask")
-def get_ask_route(q: str):
+def get_ask_route(q: str, id: str = None):
     usage_count = db.increment_usage_counter()
     if usage_count > 1000:
         # TODO: handle this client side!
         raise HTTPException(429)
 
     query_emb = NodeEmbedder.embed(q, return_type="list")
-    chunks = db.search_chunks(query_emb)
-
-    # NOTE: this is best moved into the DB query when we find the correct value.
-    chunks = [c for c in chunks if c["score"] >= 0.4]
+    if id:
+        node = db.get_text_node(id)
+        del node["embedding"]
+        chunks = [node]
+    else:
+        chunks = db.search_chunks(query_emb)
+        # NOTE: this is best moved into the DB query when we find the correct value.
+        chunks = [c for c in chunks if c["score"] >= 0.4]
 
     if len(chunks) == 0:
         raise HTTPException(404)
@@ -85,6 +89,8 @@ async def get_search_route(id: str):
 
     node = db.get_text_node(id)
     related_nodes = db.search_pages(node["embedding"], top_n=5)
+    # TODO: move this to the DB, once we decide on a good value.
+    related_nodes = [n for n in related_nodes if n["score"] >= 0.6]
     summary = summarise_text(node["text"])
     node["summary"] = summary
     node["related"] = related_nodes

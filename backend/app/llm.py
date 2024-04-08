@@ -4,7 +4,7 @@ from openai import OpenAI
 
 client = OpenAI()
 
-MODEL = "gpt-3.5-turbo-0613"
+MODEL_16K = "gpt-3.5-turbo-16k"
 
 PROMPT_TEMPLATE = (
     "A question and context documents are provided below."
@@ -27,7 +27,8 @@ def format_chunks(chunks: List[dict]) -> str:
     result = ""
     for chunk in chunks:
         chunk.pop("id")
-        chunk.pop("score")
+        if "score" in chunk:
+            chunk.pop("score")
         result += f"{json.dumps(chunk)}\n"
     return result
 
@@ -44,7 +45,7 @@ def answer_with_context(chunks: List[dict], question: str) -> Generator[str, Any
     ]
     stream = client.chat.completions.create(
         messages=messages,
-        model=MODEL,
+        model=MODEL_16K,
         stream=True,
         temperature=0,
     )
@@ -69,7 +70,7 @@ def summarise_text(text: str) -> str:
     ]
     result = client.chat.completions.create(
         messages=messages,
-        model="gpt-3.5-turbo-16k",
+        model=MODEL_16K,
         temperature=0,
     )
     return result.choices[0].message.content

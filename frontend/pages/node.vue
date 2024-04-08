@@ -18,6 +18,7 @@ const loading = ref(true);
 
 const config = useRuntimeConfig();
 const route = useRoute();
+const router = useRouter();
 
 const apiBase = config.public.apiBase;
 
@@ -36,6 +37,12 @@ const getNode = async () => {
   loading.value = false;
 };
 
+const askWithNode = () => {
+  if (node.value) {
+    router.push({ path: '/ask', query: { id: node.value.id } });
+  }
+};
+
 onMounted(() => {
   getNode();
 });
@@ -48,6 +55,12 @@ onMounted(() => {
   <div v-else-if="node" class="mx-auto p-4 space-y-4">
     <p class="text-lg font-semibold text-gray-800">
       {{ node.title }}
+      <button
+        @click="askWithNode"
+        class="ml-2 bg-gray-200 hover:bg-gray-300 text-gray-800 py-1 px-2 rounded text-xs"
+      >
+        Ask
+      </button>
     </p>
     <p class="text-blue-600 hover:text-blue-800">
       <a :href="node.url" target="_blank" class="underline">{{ node.url }}</a>

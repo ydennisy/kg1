@@ -7,17 +7,22 @@ const context = ref([]);
 const isLoading = ref(false);
 
 const config = useRuntimeConfig();
+const route = useRoute();
+
 const apiBase = config.public.apiBase;
 
 const chat = async (query: string) => {
   isLoading.value = true;
   results.value = '';
   context.value = [];
+
+  const askNode = route.query.id;
+
   let isContextReceived = false;
   let contextBuffer = '';
-  const response = await fetch(
-    `${apiBase}/api/ask?q=${encodeURIComponent(query)}`
-  );
+  let apiUrl = `${apiBase}/api/ask?q=${encodeURIComponent(query)}`;
+  apiUrl = !!askNode ? `${apiUrl}&id=${askNode}` : `${apiUrl}`;
+  const response = await fetch(apiUrl);
 
   if (response.status === 404) {
     results.value =

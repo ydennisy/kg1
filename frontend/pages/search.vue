@@ -4,6 +4,7 @@ const isLoading = ref(false);
 
 const config = useRuntimeConfig();
 const router = useRouter();
+const route = useRoute();
 
 const apiBase = config.public.apiBase;
 
@@ -15,12 +16,19 @@ const search = async (query: string) => {
   });
   // @ts-ignore
   results.value = result.data.value;
+  router.push({ path: route.path, query: { q: query } });
   isLoading.value = false;
 };
 
 const navigateToNode = (id: string) => {
   router.push({ path: `/node`, query: { id: id } });
 };
+
+onMounted(async () => {
+  if (route.query.q) {
+    await search(String(route.query.q));
+  }
+});
 </script>
 
 <template>
