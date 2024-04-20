@@ -18,14 +18,11 @@ lxml = "*"
 langchain = "*"
 sentence-transformers = "*"
 requests = "*"
-llama-index = "*"
 openai = "*"
-numpy = "*"
-pandas = "*"
 llama-index-readers-file = "*"
 httpx = "*"
 pymupdf = "*"
-torch = {version = "==2.0.1", index = "pytorch"}
+torch = {version = "*", index = "pytorch"}
 
 [dev-packages]
 
