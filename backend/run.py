@@ -9,7 +9,7 @@ from uvicorn import run
 # https://groups.google.com/g/distroless-users/c/1WYBzcsggk8
 
 PORT = int(os.getenv("PORT", "8080"))
-HOST = int(os.getenv("HOST", "0.0.0.0"))
+HOST = os.getenv("HOST", "0.0.0.0")
 
 if __name__ == "__main__":
-    sys.exit(run("main:app", host=HOST, port=PORT))
+    sys.exit(run("app.main:app", host=HOST, port=PORT))
