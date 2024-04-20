@@ -28,6 +28,7 @@ create table
     "url" text not null,
     title text not null,
     "text" text not null,
+    summary text not null,
     embedding vector(384)
   );
 

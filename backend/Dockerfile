@@ -10,6 +10,7 @@ FROM build AS build-venv
 
 COPY Pipfile.lock /Pipfile.lock
 RUN /venv/bin/pipenv requirements > requirements.txt && \
+    /venv/bin/pip uninstall pipenv && \
     /venv/bin/pip install --disable-pip-version-check -r /requirements.txt && \
     /venv/bin/python3 -c 'from sentence_transformers import SentenceTransformer; SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts")'
 
