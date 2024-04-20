@@ -11,7 +11,7 @@ FROM build AS build-venv
 COPY Pipfile.lock /Pipfile.lock
 RUN /venv/bin/pipenv requirements > requirements.txt && \
     /venv/bin/pip install --disable-pip-version-check -r /requirements.txt && \
-    python -c 'from sentence_transformers import SentenceTransformer; SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts")'
+    /venv/bin/python3 -c 'from sentence_transformers import SentenceTransformer; SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts")'
 
 
 FROM gcr.io/distroless/python3-debian12
