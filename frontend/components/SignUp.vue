@@ -7,9 +7,12 @@ import {
   TransitionRoot,
 } from '@headlessui/vue';
 
+const config = useRuntimeConfig();
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const waitRes = ref(false);
+
+const appBase = config.public.appBase;
 
 const signUp = async (data: { email: string }) => {
   const { email } = data;
@@ -26,7 +29,7 @@ const login = async (provider: 'github' | 'google' | 'twitter') => {
   const { error } = await client.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: 'http://localhost:3000/confirm',
+      redirectTo: `${appBase}/confirm`,
     },
   });
   if (error) {
@@ -161,9 +164,9 @@ const login = async (provider: 'github' | 'google' | 'twitter') => {
                           >
                             <div class="w-full border-t border-gray-300" />
                           </div>
-                          <div class="relative flex justify-center text-sm">
+                          <!--                           <div class="relative flex justify-center text-sm">
                             <span class="bg-white px-2 text-gray-500">Or</span>
-                          </div>
+                          </div> -->
                         </div>
 
                         <!--                         <div class="mt-6">
