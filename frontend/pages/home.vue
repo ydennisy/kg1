@@ -21,9 +21,9 @@ useHead({ title: 'KG1 - AI powered KMS' });
       <div class="container mx-auto text-center">
         <h2 class="text-2xl font-semibold">Warning</h2>
         <p class="mt-2">
-          This is a very early prototype, with no accounts or long term
-          guarantees on persistence of data. <br />
-          Do not yet rely on KG1 in any way!
+          This is a very early prototype, with no long term guarantees on
+          persistence of data. <br />
+          Do not YET rely on KG1 in any way!
         </p>
       </div>
     </section>
