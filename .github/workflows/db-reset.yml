@@ -22,5 +22,5 @@ jobs:
         with:
           version: latest
 
-      - run: supabase link --project-ref $SUPABASE_PROJECT_ID
-      - run: supabase db reset --linked
+      #- run: supabase link --project-ref $SUPABASE_PROJECT_ID
+      - run: supabase db reset --db-url postgres://postgres.fqdoflohofjgariilbzh:$SUPABASE_DB_PASSWORD@aws-0-eu-west-2.pooler.supabase.com:5432/postgres
