@@ -11,11 +11,15 @@ const apiBase = config.public.apiBase;
 
 const indexWebPages = async () => {
   indexingStatusMessage.value = 'Indexing...';
+  const token = useSupabaseSession().value?.access_token;
+  // TODO: handle re-auth
+  if (!token) return;
   const result = await useFetch(`${apiBase}/api/index`, {
     method: 'POST',
     body: { urls: urls.value },
     headers: {
       'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
     },
   });
   // @ts-ignore

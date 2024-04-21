@@ -23,8 +23,12 @@ const router = useRouter();
 const apiBase = config.public.apiBase;
 
 const getNode = async () => {
+  const token = useSupabaseSession().value?.access_token;
+  // TODO: handle re-auth
+  if (!token) return;
   const result = await fetch(`${apiBase}/api/node?id=${route.query.id}`, {
     method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
   });
   if (!result.ok) {
     // TODO: show user a proper error!

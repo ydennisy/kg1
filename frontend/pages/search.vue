@@ -1,6 +1,8 @@
 <script setup lang="ts">
 const results = ref([]);
 const isLoading = ref(false);
+const isResultsEmpty = ref(false);
+const lastSearchQuery = ref('');
 
 const config = useRuntimeConfig();
 const router = useRouter();
@@ -10,13 +12,23 @@ const apiBase = config.public.apiBase;
 
 const search = async (query: string) => {
   isLoading.value = true;
-  const result = await useFetch(`${apiBase}/api/search`, {
+  isResultsEmpty.value = false;
+  lastSearchQuery.value = query;
+
+  const token = useSupabaseSession().value?.access_token;
+  // TODO: handle re-auth
+  if (!token) return;
+  const { data } = await useFetch(`${apiBase}/api/search`, {
     method: 'GET',
     query: { q: query },
+    headers: { Authorization: `Bearer ${token}` },
   });
   // @ts-ignore
-  results.value = result.data.value;
+  results.value = data.value;
   router.push({ path: route.path, query: { q: query } });
+  if (results.value.length === 0) {
+    isResultsEmpty.value = true;
+  }
   isLoading.value = false;
 };
 
@@ -32,8 +44,40 @@ onMounted(async () => {
 </script>
 
 <template>
+  <!-- Search Bar -->
   <SearchBar :is-loading="isLoading" @search="search" />
 
+  <!-- Notification Banner -->
+  <div
+    v-if="isResultsEmpty"
+    class="bg-blue-100 border border-blue-300 text-blue-600 mt-2 px-4 py-2 rounded-md relative"
+    role="alert"
+  >
+    <strong class="font-bold text-sm">No results, </strong>
+    <span class="block sm:inline text-sm"
+      >found for "{{ lastSearchQuery }}" please try another query or
+      <NuxtLink class="font-bold text-blue-600 underline" to="/index"
+        >index</NuxtLink
+      >
+      some relevant documents.</span
+    >
+    <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+      <svg
+        @click="isResultsEmpty = false"
+        class="fill-current h-4 w-4 text-blue-600 cursor-pointer"
+        role="button"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 20 20"
+      >
+        <title>Close</title>
+        <path
+          d="M14.348 14.849a1.2 1.2 0 01-1.697 0L10 11.846 7.349 14.849a1.2 1.2 0 11-1.697-1.697L8.303 10 5.652 6.849a1.2 1.2 0 111.697-1.697L10 8.302l2.651-3.15a1.2 1.2 0 011.697 1.697L11.697 10l2.651 2.849a1.2 1.2 0 010 1.697z"
+        />
+      </svg>
+    </span>
+  </div>
+
+  <!-- Results table -->
   <table
     class="rounded-md mt-2 border-collapse table-auto w-full"
     v-if="results.length"

@@ -16,13 +16,11 @@ python-dotenv = "*"
 trafilatura = "*"
 lxml = "*"
 langchain = "*"
-sentence-transformers = "*"
 requests = "*"
 openai = "*"
 llama-index-readers-file = "*"
 httpx = "*"
 pymupdf = "*"
-torch = {version = "*", index = "pytorch"}
 
 [dev-packages]
 

@@ -3,6 +3,7 @@ from app.utils.chunker import NodeChunker
 from app.utils.embedder import NodeEmbedder
 from app.utils.processor import URLProcessor
 from app.utils.processor import URLProcessingResult
+from app.utils.auth import get_current_user
 
 __all__ = [
     "uuid7",
@@ -10,4 +11,5 @@ __all__ = [
     "NodeEmbedder",
     "URLProcessor",
     "URLProcessingResult",
+    "get_current_user",
 ]

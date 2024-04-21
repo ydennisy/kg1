@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const route = useRoute();
+const supabaseClient = useSupabaseClient();
+
+const isMobileMenuOpen = ref(false);
 
 const isActive = (path: string) => {
   return route.path === path
@@ -7,9 +10,19 @@ const isActive = (path: string) => {
     : 'text-gray-300 hover:bg-gray-700 hover:text-white';
 };
 
-const isMobileMenuOpen = ref(false);
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+const logout = async () => {
+  const { error } = await supabaseClient.auth.signOut();
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  await navigateTo('/');
 };
 </script>
 
@@ -102,7 +115,15 @@ const toggleMobileMenu = () => {
         </div>
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
-        ></div>
+        >
+          <button
+            type="button"
+            @click="logout"
+            class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+          >
+            Logout
+          </button>
+        </div>
       </div>
     </div>
 

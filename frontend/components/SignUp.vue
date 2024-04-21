@@ -22,10 +22,15 @@ const signUp = async (data: { email: string }) => {
   waitRes.value = true;
 };
 
-const login = async (provider: 'github' | 'google' | 'linkedin') => {
-  const { error } = await client.auth.signInWithOAuth({ provider });
+const login = async (provider: 'github' | 'google' | 'twitter') => {
+  const { error } = await client.auth.signInWithOAuth({
+    provider,
+    options: {
+      redirectTo: 'http://localhost:3000/confirm',
+    },
+  });
   if (error) {
-    return alert('Something went wrong !');
+    return alert('Something went wrong!');
   }
 };
 </script>
@@ -106,11 +111,11 @@ const login = async (provider: 'github' | 'google' | 'linkedin') => {
 
                               <div>
                                 <button
-                                  @click="login('linkedin')"
+                                  @click="login('twitter')"
                                   class="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
                                 >
                                   <span class="sr-only"
-                                    >Sign in with LinkedIn</span
+                                    >Sign in with Twitter</span
                                   >
                                   <svg
                                     class="h-5 w-5"
@@ -119,7 +124,7 @@ const login = async (provider: 'github' | 'google' | 'linkedin') => {
                                     viewBox="0 0 24 24"
                                   >
                                     <path
-                                      d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"
+                                      d="M23.953 4.569a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 9.94 9.94 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482A13.96 13.96 0 011.64 3.161a4.822 4.822 0 001.524 6.573 4.903 4.903 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.224.085 4.937 4.937 0 004.6 3.429A9.867 9.867 0 010 21.543a13.94 13.94 0 007.548 2.209c9.142 0 14.307-7.721 13.995-14.646a10.013 10.013 0 002.41-2.537z"
                                     />
                                   </svg>
                                 </button>

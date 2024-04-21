@@ -20,15 +20,31 @@ class DB:
         result = self._client.rpc("update_usage_counter").execute()
         return result.data
 
-    def search_pages(self, emb: list[float], top_n: int = 10):
+    def search_pages(
+        self, emb: list[float], user_id: str, threshold: float = 0.5, top_n: int = 10
+    ):
         data = self._client.rpc(
-            "search_pages", {"query_embedding": emb, "top_n": top_n}
+            "search_pages",
+            {
+                "query_embedding": emb,
+                "user_id_filter": user_id,
+                "threshold": threshold,
+                "top_n": top_n,
+            },
         ).execute()
         return data.data
 
-    def search_chunks(self, emb: list[float], top_n: int = 10):
+    def search_chunks(
+        self, emb: list[float], user_id: str, threshold: float = 0.5, top_n: int = 10
+    ):
         data = self._client.rpc(
-            "search_chunks", {"query_embedding": emb, "top_n": top_n}
+            "search_chunks",
+            {
+                "query_embedding": emb,
+                "user_id_filter": user_id,
+                "threshold": threshold,
+                "top_n": top_n,
+            },
         ).execute()
         return data.data
 
@@ -48,9 +64,13 @@ class DB:
         return data.data
 
     def create_urls(self, urls: list[URL], user_id: str):
-        data = [{**url.to_persistence(), "user_id": user_id} for url in urls]
+        urls_to_persist = []
+        for url in urls:
+            url_to_persist = url.to_persistence()
+            url_to_persist["user_id"] = user_id
+            urls_to_persist.append(url_to_persist)
         try:
-            return self._client.table("urls_feed").insert(data).execute()
+            return self._client.table("urls_feed").insert(urls_to_persist).execute()
         except Exception as ex:
             print(ex)
 
@@ -66,11 +86,14 @@ class DB:
             except Exception as ex:
                 print(f"Failed to update URL with id {url.id}: {ex}")
 
-    def create_text_nodes(self, nodes: list[TextNode]):
+    def create_text_nodes(self, nodes: list[TextNode], user_id: str):
         text_nodes_to_persist = []
         text_node_chunks_to_persist = []
         for node in nodes:
             text_node, text_node_chunks = node.to_persistence()
+            text_node["user_id"] = user_id
+            for chunk in text_node_chunks:
+                chunk["user_id"] = user_id
             text_nodes_to_persist.append(text_node)
             text_node_chunks_to_persist.extend(text_node_chunks)
 

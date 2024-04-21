@@ -1,20 +1,23 @@
 import json
 from typing import List
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from pydantic import BaseModel
 
-from app.llm import answer_with_context, summarise_text
 from app.db import DB
+from app.llm import summarise_text
+from app.llm import answer_with_context
 from app.utils import URLProcessor
 from app.utils import URLProcessingResult
 from app.utils import NodeChunker
 from app.utils import NodeEmbedder
+from app.utils import get_current_user
 from app.domain import TextNode
 from app.domain import URL
+
 
 load_dotenv()
 app = FastAPI()
@@ -46,26 +49,29 @@ async def get_health():
 
 
 @app.get("/api/search")
-async def get_search_route(q: str):
-    query_emb = NodeEmbedder.embed(q, return_type="list")
-    pages = db.search_pages(query_emb)
+async def get_search_route(q: str, user=Depends(get_current_user)):
+    user_id = user.id
+    query_emb = NodeEmbedder.embed(q)
+    pages = db.search_pages(query_emb, user_id=user_id, threshold=0.4)
     return pages
 
 
 @app.get("/api/ask")
-def get_ask_route(q: str, id: str = None):
+def get_ask_route(q: str, id: str = None, user=Depends(get_current_user)):
+    user_id = user.id
     usage_count = db.increment_usage_counter()
     if usage_count > 1000:
         # TODO: handle this client side!
         raise HTTPException(429)
 
-    query_emb = NodeEmbedder.embed(q, return_type="list")
+    query_emb = NodeEmbedder.embed(q)
     if id:
+        # TODO: check this node belongs to the user requesting it!
         node = db.get_text_node(id)
         del node["embedding"]
         chunks = [node]
     else:
-        chunks = db.search_chunks(query_emb)
+        chunks = db.search_chunks(query_emb, user_id=user_id)
         # NOTE: this is best moved into the DB query when we find the correct value.
         chunks = [c for c in chunks if c["score"] >= 0.4]
 
@@ -81,16 +87,17 @@ def get_ask_route(q: str, id: str = None):
 
 
 @app.get("/api/node")
-async def get_search_route(id: str):
+async def get_node_route(id: str, user=Depends(get_current_user)):
+    user_id = user.id
     usage_count = db.increment_usage_counter()
     if usage_count > 1000:
         # TODO: handle this client side!
         raise HTTPException(429)
 
     node = db.get_text_node(id)
-    related_nodes = db.search_pages(node["embedding"], top_n=5)
-    # TODO: move this to the DB, once we decide on a good value.
-    related_nodes = [n for n in related_nodes if n["score"] >= 0.6]
+    related_nodes = db.search_pages(
+        node["embedding"], user_id=user_id, threshold=0.6, top_n=5
+    )
     node["related"] = related_nodes
     del node["text"]
     del node["embedding"]
@@ -98,10 +105,11 @@ async def get_search_route(id: str):
 
 
 @app.post("/api/index")
-async def post_index_route(payload: PageCreate):
+async def post_index_route(payload: PageCreate, user=Depends(get_current_user)):
     try:
+        user_id = user.id
         urls = [URL(url=url) for url in payload.urls]
-        db.create_urls(urls=urls, user_id="public")
+        db.create_urls(urls=urls, user_id=user_id)
         processor = URLProcessor()
         processed_urls = await processor.process_urls(urls)
 
@@ -126,7 +134,7 @@ async def post_index_route(payload: PageCreate):
                 print(ex)
                 urls[idx].set_indexing_failure()
 
-        db.create_text_nodes(nodes)
+        db.create_text_nodes(nodes=nodes, user_id=user_id)
         db.update_urls(urls=urls)
         return {"is_success": True}
     except Exception as ex:

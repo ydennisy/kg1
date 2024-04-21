@@ -1,37 +1,25 @@
-from datetime import datetime
-from sentence_transformers import SentenceTransformer
-
-# NOTE: alternative model options to be tested for embeddings.
-# sentence-transformers/all-MiniLM-L6-v2 (current)
-# tomaarsen/all-MiniLM-L6-v2 (loading speed)
-# mixedbread-ai/mxbai-embed-large-v1 (quality)
-
-model = None
+from openai import OpenAI
 
 
-def load_model():
-    global model
-    model = SentenceTransformer(
-        "sentence-transformers/all-MiniLM-L6-v2", cache_folder="./app/artefacts"
-    )
-
-
-def record_time(task, args=(), kwargs={}):
-    start_time = datetime.now()
-    task(*args, **kwargs)
-    return datetime.now() - start_time
-
-
-print(f"Time taken to load embedding model: {record_time(load_model, )}")
+client = OpenAI()
 
 
 class NodeEmbedder:
     @staticmethod
-    def embed(texts: str | list[str], return_type: str = "np") -> list[float]:
-        embeddings = model.encode(texts)
-        if return_type == "np":
-            return embeddings
-        elif return_type == "list":
-            return embeddings.tolist()
-        else:
-            raise ValueError(f"unsupported return_type: {return_type}")
+    def embed(texts: str | list[str]) -> list[float]:
+        is_input_single_text = False
+        if isinstance(texts, str):
+            texts = [texts]
+            is_input_single_text = True
+
+        embeddings = []
+        for text in texts:
+            response = client.embeddings.create(
+                input=text, model="text-embedding-3-small", dimensions=256
+            )
+            embeddings.append(response.data[0].embedding)
+
+        if is_input_single_text:
+            return embeddings[0]
+
+        return embeddings

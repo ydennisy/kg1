@@ -38,9 +38,9 @@ class TextNode:
             chunk.text for chunk in self.chunks
         ]
         embeddings = embedder.embed(texts)
-        self.embedding = embeddings[0].tolist()
+        self.embedding = embeddings[0]
         for chunk, embedding in zip(self.chunks, embeddings[1:]):
-            chunk.embedding = embedding.tolist()
+            chunk.embedding = embedding
 
     # TODO: this can be done using an LLM.
     def create_title_if_missing(self) -> None:

@@ -20,9 +20,15 @@ const chat = async (query: string) => {
 
   let isContextReceived = false;
   let contextBuffer = '';
+
+  const token = useSupabaseSession().value?.access_token;
+  // TODO: handle re-auth
+  if (!token) return;
   let apiUrl = `${apiBase}/api/ask?q=${encodeURIComponent(query)}`;
   apiUrl = !!askNode ? `${apiUrl}&id=${askNode}` : `${apiUrl}`;
-  const response = await fetch(apiUrl);
+  const response = await fetch(apiUrl, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 
   if (response.status === 404) {
     results.value =
