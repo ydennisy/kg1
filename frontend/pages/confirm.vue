@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const redirectToPreviousPath = async () => {
   const redirectPath = useCookie('sb-redirect-path');
-  console.log('I am trying to redirect!!!', redirectPath);
   if (!redirectPath) {
     await navigateTo('/');
   }

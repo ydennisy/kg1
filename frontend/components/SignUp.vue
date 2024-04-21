@@ -26,7 +26,6 @@ const signUp = async (data: { email: string }) => {
 };
 
 const login = async (provider: 'github' | 'google' | 'twitter') => {
-  console.log(`${appBase}/confirm`);
   const { error } = await client.auth.signInWithOAuth({
     provider,
     options: {
