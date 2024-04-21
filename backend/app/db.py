@@ -35,7 +35,7 @@ class DB:
     def get_text_node(self, id: str):
         data = (
             self._client.table("text_nodes")
-            .select("id, title, text, url, embedding")
+            .select("id, title, text, summary, url, embedding")
             .eq("id", id)
             .execute()
         )

@@ -91,8 +91,6 @@ async def get_search_route(id: str):
     related_nodes = db.search_pages(node["embedding"], top_n=5)
     # TODO: move this to the DB, once we decide on a good value.
     related_nodes = [n for n in related_nodes if n["score"] >= 0.6]
-    summary = summarise_text(node["text"])
-    node["summary"] = summary
     node["related"] = related_nodes
     del node["text"]
     del node["embedding"]
@@ -116,6 +114,7 @@ async def post_index_route(payload: PageCreate):
                         url_feed_id=urls[idx].id,
                         title=processed_url.title,
                         text=processed_url.text,
+                        summary=summarise_text(processed_url.text),
                     )
                     text_node.create_chunks(NodeChunker)
                     text_node.create_embeddings(NodeEmbedder)
