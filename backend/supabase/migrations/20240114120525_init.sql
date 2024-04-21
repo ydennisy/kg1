@@ -18,6 +18,8 @@ create table
     raw_url text not null
   );
 
+alter table urls_feed enable row level security;
+
 create index
   on urls_feed (
     user_id
@@ -38,6 +40,8 @@ create table
     embedding vector(256)
   );
 
+alter table text_nodes enable row level security;
+
 create index
   on text_nodes (
     user_id
@@ -57,6 +61,8 @@ create table
     embedding vector(256)
   );
 
+alter table text_node_chunks enable row level security;
+
 create index
   on text_node_chunks (
     user_id
@@ -72,6 +78,8 @@ create table
     id text primary key,
     count integer not null default 0
   );
+
+alter table usage_counter enable row level security;
 
 insert into usage_counter(id, count) values ('openai-api', 0);
 
