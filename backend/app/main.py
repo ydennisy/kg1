@@ -1,7 +1,7 @@
 import json
 from typing import List, Any
 
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Body
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -167,6 +167,6 @@ async def post_index_route(payload: PageCreate, user=Depends(get_current_user)):
 
 
 @app.post("/api/email")
-async def post_index_route(payload: Email):
+async def post_index_route(payload: Any = Body(None)):
     print(payload)
     return "OK"
