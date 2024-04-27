@@ -1,0 +1,12 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+unstructured = {extras = ["pdf", "md"], version = "*"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"

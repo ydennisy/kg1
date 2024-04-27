@@ -1,7 +1,8 @@
 import json
 from typing import List, Any
 
-from fastapi import FastAPI, HTTPException, Depends, Body, Form
+from fastapi import FastAPI, HTTPException, Depends, Body, Form, Request
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -167,20 +168,20 @@ class Email(BaseModel):
 
 
 @app.post("/api/email")
-async def post_index_route(
-    to: EmailStr = Form(...),
-    from_: EmailStr = Form(..., alias="from"),
-    subject: str = Form(...),
-    text: str = Form(...),
-    html: str = Form(...),
-    attachments: int = Form(...),
-    attachment_info: Any = Form(..., alias="attachment-info"),
-):
-    print(to)
+async def post_index_route(request: Request):
+    try:
+        form = await request.form()
+        print(form)
+        form_json = jsonable_encoder(form)
+        print(form_json)
+    except Exception as ex:
+        print(ex)
+
+    """     print(to)
     print(from_)
     print(subject)
     print(text)
     print(html)
     print(attachments)
-    print(attachment_info)
+    print(attachment_info) """
     return "OK"
