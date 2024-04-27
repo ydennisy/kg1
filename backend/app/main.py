@@ -1,11 +1,11 @@
 import json
 from typing import List, Any
 
-from fastapi import FastAPI, HTTPException, Depends, Body
+from fastapi import FastAPI, HTTPException, Depends, Body, Form
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 from app.db import DB
 from app.llm import summarise_text
@@ -46,15 +46,15 @@ class PageCreate(BaseModel):
 class Email(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    to: str
-    from_: str = Field(..., alias="from")
-    subject: str
-    text: str
-    html: str
-    attachments: int
-    attachment_info: Any = Field(..., alias="attachment-info")
-    spam_score: Any
-    spam_report: Any
+    to: EmailStr = Form(...)
+    from_: EmailStr = Form(..., alias="from")
+    subject: str = Form(...)
+    text: str = Form(...)
+    html: str = Form(...)
+    attachments: int = Form(...)
+    attachment_info: Any = Form(..., alias="attachment-info")
+    spam_score: Any = Form(...)
+    spam_report: Any = Form(...)
 
 
 @app.get("/api/health")
@@ -167,6 +167,6 @@ async def post_index_route(payload: PageCreate, user=Depends(get_current_user)):
 
 
 @app.post("/api/email")
-async def post_index_route(payload: Any = Body(None)):
+async def post_index_route(payload: Email):
     print(payload)
     return "OK"
