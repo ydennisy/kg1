@@ -8,6 +8,8 @@ export default defineNuxtConfig({
     public: {
       apiBase: '',
       appBase: '',
+      supabaseUrl: '',
+      supabaseAnonKey: '',
     },
   },
   routeRules: {

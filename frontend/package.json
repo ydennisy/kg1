@@ -10,14 +10,14 @@
   },
   "devDependencies": {
     "@nuxtjs/supabase": "^1.2.1",
-    "@nuxtjs/tailwindcss": "^6.11.4",
-    "@types/markdown-it": "^13.0.7",
+    "@nuxtjs/tailwindcss": "^6.12.0",
+    "@types/markdown-it": "^14.0.1",
     "nuxt": "^3.11.2",
-    "vue": "^3.4.23",
+    "vue": "^3.4.25",
     "vue-router": "^4.3.2"
   },
   "dependencies": {
-    "@headlessui/vue": "^1.7.19",
+    "@headlessui/vue": "^1.7.21",
     "markdown-it": "^14.1.0"
   }
 }
