@@ -96,13 +96,20 @@ async def get_node_route(id: str, user=Depends(get_current_user)):
 
     node = db.get_text_node(id)
     related_nodes = db.search_pages(
-        node["embedding"], user_id=user_id, threshold=0.6, top_n=5
+        node["embedding"], user_id=user_id, threshold=0.4, top_n=5
     )
     related_nodes = [n for n in related_nodes if n["id"] != id]
     node["related"] = related_nodes
     del node["text"]
     del node["embedding"]
     return node
+
+
+@app.get("/api/index-feed")
+async def get_index_feed_route(user=Depends(get_current_user)):
+    user_id = user.id
+    urls = db.get_urls_feed(user_id)
+    return urls
 
 
 @app.post("/api/index")

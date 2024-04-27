@@ -23,7 +23,7 @@ class DB:
     def search_pages(
         self, emb: list[float], user_id: str, threshold: float = 0.5, top_n: int = 10
     ):
-        data = self._client.rpc(
+        result = self._client.rpc(
             "search_pages",
             {
                 "query_embedding": emb,
@@ -32,12 +32,12 @@ class DB:
                 "top_n": top_n,
             },
         ).execute()
-        return data.data
+        return result.data
 
     def search_chunks(
         self, emb: list[float], user_id: str, threshold: float = 0.5, top_n: int = 10
     ):
-        data = self._client.rpc(
+        result = self._client.rpc(
             "search_chunks",
             {
                 "query_embedding": emb,
@@ -46,22 +46,22 @@ class DB:
                 "top_n": top_n,
             },
         ).execute()
-        return data.data
+        return result.data
 
     def get_text_node(self, id: str):
-        data = (
+        result = (
             self._client.table("text_nodes")
             .select("id, title, text, summary, url, embedding")
             .eq("id", id)
             .execute()
         )
-        return data.data[0]
+        return result.data[0]
 
     def get_similar_text_nodes(self, id: str, top_n: int = 10):
-        data = self._client.rpc(
+        result = self._client.rpc(
             "get_similar_text_nodes", {"id": id, "top_n": top_n}
         ).execute()
-        return data.data
+        return result.data
 
     def create_urls(self, urls: list[URL], user_id: str):
         urls_to_persist = []
@@ -101,3 +101,14 @@ class DB:
         self._client.table("text_node_chunks").insert(
             text_node_chunks_to_persist
         ).execute()
+
+    def get_urls_feed(self, user_id: str):
+        result = (
+            self._client.table("urls_feed")
+            .select("id, created_at, url, status")
+            .eq("user_id", user_id)
+            .order("created_at", desc=True)
+            .limit(10)
+            .execute()
+        )
+        return result.data

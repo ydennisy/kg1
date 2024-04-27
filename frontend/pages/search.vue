@@ -1,12 +1,12 @@
 <script setup lang="ts">
-interface Result {
+interface SearchResult {
   id: string;
   title: string;
   url: string;
   score: number;
 }
 
-const results = ref<Result[]>([]);
+const results = ref<SearchResult[]>([]);
 const isLoading = ref(false);
 const isResultsEmpty = ref(false);
 const lastSearchQuery = ref('');
@@ -25,7 +25,7 @@ const search = async (query: string) => {
   const token = useSupabaseSession().value?.access_token;
   // TODO: handle re-auth
   if (!token) return;
-  const { data } = await useFetch<Result[]>(`${apiBase}/api/search`, {
+  const { data } = await useFetch<SearchResult[]>(`${apiBase}/api/search`, {
     method: 'GET',
     query: { q: query },
     headers: { Authorization: `Bearer ${token}` },
