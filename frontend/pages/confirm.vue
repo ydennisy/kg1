@@ -2,7 +2,7 @@
 const redirectToPreviousPath = async () => {
   const redirectPath = useCookie('sb-redirect-path');
   if (!redirectPath) {
-    await navigateTo('/');
+    await navigateTo('/search');
   }
   await navigateTo(redirectPath.value);
 };

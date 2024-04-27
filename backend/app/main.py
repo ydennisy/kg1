@@ -49,7 +49,7 @@ async def get_health():
 
 
 @app.get("/api/search")
-async def get_search_route(q: str, user=Depends(get_current_user)):
+def get_search_route(q: str, user=Depends(get_current_user)):
     user_id = user.id
     query_emb = NodeEmbedder.embed(q)
     pages = db.search_pages(query_emb, user_id=user_id, threshold=0.4)
