@@ -1,5 +1,12 @@
 <script setup lang="ts">
-const results = ref([]);
+interface Result {
+  id: string;
+  title: string;
+  url: string;
+  score: number;
+}
+
+const results = ref<Result[]>([]);
 const isLoading = ref(false);
 const isResultsEmpty = ref(false);
 const lastSearchQuery = ref('');
@@ -18,13 +25,17 @@ const search = async (query: string) => {
   const token = useSupabaseSession().value?.access_token;
   // TODO: handle re-auth
   if (!token) return;
-  const { data } = await useFetch(`${apiBase}/api/search`, {
+  const { data } = await useFetch<Result[]>(`${apiBase}/api/search`, {
     method: 'GET',
     query: { q: query },
     headers: { Authorization: `Bearer ${token}` },
   });
-  // @ts-ignore
-  results.value = data.value;
+  // TODO: handle re-auth
+  if (!data.value) {
+    results.value = [];
+  } else {
+    results.value = data.value;
+  }
   router.push({ path: route.path, query: { q: query } });
   if (results.value.length === 0) {
     isResultsEmpty.value = true;
@@ -33,7 +44,7 @@ const search = async (query: string) => {
 };
 
 const navigateToNode = (id: string) => {
-  router.push({ path: `/node`, query: { id: id } });
+  router.push({ path: `/node`, query: { id } });
 };
 
 onMounted(async () => {
@@ -53,8 +64,8 @@ onMounted(async () => {
     class="bg-blue-100 border border-blue-300 text-blue-600 mt-2 px-4 py-2 rounded-md relative"
     role="alert"
   >
-    <strong class="font-bold text-sm">No results, </strong>
-    <span class="block sm:inline text-sm"
+    <strong class="font-bold text-xs">No results, </strong>
+    <span class="block sm:inline text-xs"
       >found for "{{ lastSearchQuery }}" please try another query or
       <NuxtLink class="font-bold text-blue-600 underline" to="/index"
         >index</NuxtLink

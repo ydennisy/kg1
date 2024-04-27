@@ -43,7 +43,10 @@ const getNode = async () => {
 
 const askWithNode = () => {
   if (node.value) {
-    router.push({ path: '/ask', query: { id: node.value.id } });
+    router.push({
+      path: '/ask',
+      query: { id: node.value.id, title: node.value.title },
+    });
   }
 };
 
