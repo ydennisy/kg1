@@ -43,20 +43,6 @@ class PageCreate(BaseModel):
     urls: List[str]
 
 
-class Email(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    to: EmailStr = Form(...)
-    from_: EmailStr = Form(..., alias="from")
-    subject: str = Form(...)
-    text: str = Form(...)
-    html: str = Form(...)
-    attachments: int = Form(...)
-    attachment_info: Any = Form(..., alias="attachment-info")
-    spam_score: Any = Form(...)
-    spam_report: Any = Form(...)
-
-
 @app.get("/api/health")
 async def get_health():
     return {"STATUS": "OK"}
@@ -166,7 +152,35 @@ async def post_index_route(payload: PageCreate, user=Depends(get_current_user)):
         return {"is_success": False}
 
 
+class Email(BaseModel):
+    model_config = ConfigDict(populate_by_name=True, extra="ignore")
+
+    to: EmailStr = Form(...)
+    # from_: EmailStr = Form(..., alias="from")
+    # subject: str = Form(...)
+    # text: str = Form(...)
+    # html: str = Form(...)
+    # attachments: int = Form(...)
+    # attachment_info: Any = Form(..., alias="attachment-info")
+    # spam_score: Any = Form(...)
+    # spam_report: Any = Form(...)
+
+
 @app.post("/api/email")
-async def post_index_route(payload: Email):
-    print(payload)
+async def post_index_route(
+    to: EmailStr = Form(...),
+    from_: EmailStr = Form(..., alias="from"),
+    subject: str = Form(...),
+    text: str = Form(...),
+    html: str = Form(...),
+    attachments: int = Form(...),
+    attachment_info: Any = Form(..., alias="attachment-info"),
+):
+    print(to)
+    print(from_)
+    print(subject)
+    print(text)
+    print(html)
+    print(attachments)
+    print(attachment_info)
     return "OK"
