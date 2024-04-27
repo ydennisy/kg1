@@ -98,6 +98,7 @@ async def get_node_route(id: str, user=Depends(get_current_user)):
     related_nodes = db.search_pages(
         node["embedding"], user_id=user_id, threshold=0.6, top_n=5
     )
+    related_nodes = [n for n in related_nodes if n["id"] != id]
     node["related"] = related_nodes
     del node["text"]
     del node["embedding"]
