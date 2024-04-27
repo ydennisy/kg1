@@ -1,11 +1,11 @@
 import json
-from typing import List
+from typing import List, Any
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.db import DB
 from app.llm import summarise_text
@@ -41,6 +41,21 @@ app.add_middleware(
 
 class PageCreate(BaseModel):
     urls: List[str]
+
+
+class Email(BaseModel):
+    to: str
+    from_: str = Field(..., alias="from")
+    subject: str
+    text: str
+    html: str
+    attachments: int
+    attachment_info: Any = Field(..., alias="attachment-info")
+    spam_score: Any
+    spam_report: Any
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 @app.get("/api/health")
@@ -150,3 +165,9 @@ async def post_index_route(payload: PageCreate, user=Depends(get_current_user)):
         # raise HTTPException(500)
         # TODO: update client to handle HTTP status codes
         return {"is_success": False}
+
+
+@app.post("/api/email")
+async def post_index_route(payload: Email):
+    print(payload)
+    return "OK"
