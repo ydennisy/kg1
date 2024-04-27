@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from app.db import DB
 from app.llm import summarise_text
@@ -44,6 +44,8 @@ class PageCreate(BaseModel):
 
 
 class Email(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     to: str
     from_: str = Field(..., alias="from")
     subject: str
@@ -53,9 +55,6 @@ class Email(BaseModel):
     attachment_info: Any = Field(..., alias="attachment-info")
     spam_score: Any
     spam_report: Any
-
-    class Config:
-        allow_population_by_field_name = True
 
 
 @app.get("/api/health")
