@@ -4,6 +4,7 @@ import { formatDistance } from 'date-fns';
 interface IndexFeedResult {
   id: string;
   created_at: string;
+  source: string;
   status: string;
   url: string;
 }
@@ -33,9 +34,12 @@ const indexWebPages = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-  // @ts-ignore
-  const saveStatusMessage = result.data?.value.is_success ? 'Success' : 'Error';
-  indexingStatusMessage.value = saveStatusMessage;
+
+  if (result.status.value == 'error') {
+    indexingStatusMessage.value = 'Error';
+  } else {
+    indexingStatusMessage.value = 'Success';
+  }
 
   setTimeout(() => {
     input.value = '';
@@ -139,6 +143,7 @@ watch(input, (newValue) => {
       <tr>
         <th class="rounded-tl-md py-2 px-4 text-left">URL</th>
         <th class="py-2 px-4 text-left">Submitted</th>
+        <th class="py-2 px-4 text-left">Source</th>
         <th class="rounded-tr-md py-2 px-4 text-left">Status</th>
       </tr>
     </thead>
@@ -156,6 +161,7 @@ watch(input, (newValue) => {
         <td class="py-2 px-4 text-xs text-slate-600">
           {{ formatTimeToHumanFriendly(item.created_at) }}
         </td>
+        <td class="py-2 px-4 text-xs text-slate-600">{{ item.source }}</td>
         <td class="py-2 px-4 text-xs text-slate-600">{{ item.status }}</td>
       </tr>
     </tbody>

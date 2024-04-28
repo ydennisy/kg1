@@ -105,7 +105,7 @@ class DB:
     def get_urls_feed(self, user_id: str):
         result = (
             self._client.table("urls_feed")
-            .select("id, created_at, url, status")
+            .select("id, created_at, url, status, source")
             .eq("user_id", user_id)
             .order("created_at", desc=True)
             .limit(10)

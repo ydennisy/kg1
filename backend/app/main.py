@@ -118,11 +118,8 @@ async def post_index_route(payload: IndexPayload, user=Depends(get_current_user)
         user_id = user.id
         urls = [URL(url=url, source=URLSource.WEB) for url in payload.urls]
         await indexing_service.index(urls, user_id)
-        return {"is_success": True}
     except Exception as ex:
-        # TODO: add a proper HTTPException here and handle on client.
-        print(ex)
-        return {"is_success": False}
+        raise HTTPException(500) from ex
 
 
 class IndexEmailPayload(BaseModel):
@@ -138,11 +135,8 @@ class IndexEmailPayload(BaseModel):
 async def post_index_route(request: Request):
     try:
         form = await request.form()
-        print(form)
         parsed_form = jsonable_encoder(form)
-        print(parsed_form)
         payload = IndexEmailPayload(**parsed_form)
-        print(payload)
 
         app_email_alias = payload.to.split("@")[0]
         user_id = db.get_user_id_by_email_alias(app_email_alias)
@@ -152,5 +146,4 @@ async def post_index_route(request: Request):
 
         await indexing_service.index(urls, user_id)
     except Exception as ex:
-        print(ex)
         raise HTTPException(500) from ex
