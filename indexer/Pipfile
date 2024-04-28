@@ -5,8 +5,15 @@ name = "pypi"
 
 [packages]
 unstructured = {extras = ["pdf", "md"], version = "*"}
+llama-index-readers-file = "*"
+langchain = "*"
+trafilatura = "*"
+lxml = "*"
+requests = "*"
+pymupdf = "*"
 
 [dev-packages]
+ipykernel = "*"
 
 [requires]
 python_version = "3.11"

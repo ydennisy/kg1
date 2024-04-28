@@ -6,9 +6,14 @@ from app.utils.uuid import uuid7
 
 class URLStatus(Enum):
     RECEIVED_AWAITING_INDEXING = "RECEIVED_AWAITING_INDEXING"
-    INDEXING_SKIPED_AS_RECENT_DUPLICATE = "INDEXING_SKIPED_AS_RECENT_DUPLICATE"
+    INDEXING_SKIPPED_AS_RECENT_DUPLICATE = "INDEXING_SKIPPED_AS_RECENT_DUPLICATE"
     INDEXED_SUCCESSFULLY = "INDEXED_SUCCESSFULLY"
     INDEXING_FAILED = "INDEXING_FAILED"
+
+
+class URLSource(Enum):
+    WEB = "WEB"
+    EMAIL = "EMAIL"
 
 
 class URLPersistence(TypedDict):
@@ -19,10 +24,11 @@ class URLPersistence(TypedDict):
 
 
 class URL:
-    def __init__(self, url: str) -> None:
+    def __init__(self, url: str, source: URLSource) -> None:
         self._id = uuid7()
         self._url = url
         self._raw_url = url
+        self._source = source
         # TODO: this needs more thought as currently this cleaning can cause failures
         # self.url = self.clean_url(url)
         self._status: URLStatus = URLStatus.RECEIVED_AWAITING_INDEXING
@@ -56,4 +62,5 @@ class URL:
             "url": self._url,
             "raw_url": self._raw_url,
             "status": self._status.value,
+            "source": self._source.value,
         }

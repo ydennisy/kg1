@@ -1,7 +1,7 @@
 import json
-from typing import List, Any
+from typing import List
 
-from fastapi import FastAPI, HTTPException, Depends, Body, Form, Request
+from fastapi import FastAPI, HTTPException, Depends, status, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,20 +9,19 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 from app.db import DB
-from app.llm import summarise_text
 from app.llm import answer_with_context
-from app.utils import URLProcessor
-from app.utils import URLProcessingResult
-from app.utils import NodeChunker
 from app.utils import NodeEmbedder
 from app.utils import get_current_user
-from app.domain import TextNode
-from app.domain import URL
+from app.utils import parse_urls_from_text
+from app.domain import URL, URLSource
+
+from app.services import IndexingService
 
 
 load_dotenv()
 app = FastAPI()
 db = DB()
+indexing_service = IndexingService()
 
 
 allowed_origins = [
@@ -38,10 +37,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-class PageCreate(BaseModel):
-    urls: List[str]
 
 
 @app.get("/api/health")
@@ -113,75 +108,49 @@ async def get_index_feed_route(user=Depends(get_current_user)):
     return urls
 
 
-@app.post("/api/index")
-async def post_index_route(payload: PageCreate, user=Depends(get_current_user)):
+class IndexPayload(BaseModel):
+    urls: List[str]
+
+
+@app.post("/api/index", status_code=status.HTTP_201_CREATED)
+async def post_index_route(payload: IndexPayload, user=Depends(get_current_user)):
     try:
         user_id = user.id
-        urls = [URL(url=url) for url in payload.urls]
-        db.create_urls(urls=urls, user_id=user_id)
-        processor = URLProcessor()
-        processed_urls = await processor.process_urls(urls)
-
-        nodes = []
-        for idx, processed_url in enumerate(processed_urls):
-            try:
-                if isinstance(processed_url, URLProcessingResult):
-                    text_node = TextNode(
-                        url=processed_url.url,
-                        url_feed_id=urls[idx].id,
-                        title=processed_url.title,
-                        text=processed_url.text,
-                        summary=summarise_text(processed_url.text),
-                    )
-                    text_node.create_chunks(NodeChunker)
-                    text_node.create_embeddings(NodeEmbedder)
-                    nodes.append(text_node)
-                    urls[idx].set_indexing_success()
-                else:
-                    urls[idx].set_indexing_failure()
-            except Exception as ex:
-                print(ex)
-                urls[idx].set_indexing_failure()
-
-        db.create_text_nodes(nodes=nodes, user_id=user_id)
-        db.update_urls(urls=urls)
+        urls = [URL(url=url, source=URLSource.WEB) for url in payload.urls]
+        await indexing_service.index(urls, user_id)
         return {"is_success": True}
     except Exception as ex:
+        # TODO: add a proper HTTPException here and handle on client.
         print(ex)
-        # raise HTTPException(500)
-        # TODO: update client to handle HTTP status codes
         return {"is_success": False}
 
 
-class Email(BaseModel):
+class IndexEmailPayload(BaseModel):
     model_config = ConfigDict(populate_by_name=True, extra="ignore")
 
-    to: EmailStr = Form(...)
-    # from_: EmailStr = Form(..., alias="from")
-    # subject: str = Form(...)
-    # text: str = Form(...)
-    # html: str = Form(...)
-    # attachments: int = Form(...)
-    # attachment_info: Any = Form(..., alias="attachment-info")
-    # spam_score: Any = Form(...)
-    # spam_report: Any = Form(...)
+    to: EmailStr
+    from_: EmailStr = Field(..., alias="from")
+    subject: str = None
+    text: str = None
 
 
-@app.post("/api/email")
+@app.post("/api/email", status_code=status.HTTP_201_CREATED)
 async def post_index_route(request: Request):
     try:
         form = await request.form()
         print(form)
-        form_json = jsonable_encoder(form)
-        print(form_json)
+        parsed_form = jsonable_encoder(form)
+        print(parsed_form)
+        payload = IndexEmailPayload(**parsed_form)
+        print(payload)
+
+        app_email_alias = payload.to.split("@")[0]
+        user_id = db.get_user_id_by_email_alias(app_email_alias)
+
+        raw_urls = parse_urls_from_text(payload.text)
+        urls = [URL(url=url, source=URLSource.EMAIL) for url in raw_urls]
+
+        await indexing_service.index(urls, user_id)
     except Exception as ex:
         print(ex)
-
-    """     print(to)
-    print(from_)
-    print(subject)
-    print(text)
-    print(html)
-    print(attachments)
-    print(attachment_info) """
-    return "OK"
+        raise HTTPException(500) from ex

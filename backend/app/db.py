@@ -112,3 +112,14 @@ class DB:
             .execute()
         )
         return result.data
+
+    def get_user_id_by_email_alias(self, app_email_alias: str):
+        result = (
+            self._client.table("users")
+            .select("id")
+            .eq("app_email_alias", app_email_alias)
+            .execute()
+        )
+        if len(result.data) != 1:
+            return None
+        return result.data[0]["id"]

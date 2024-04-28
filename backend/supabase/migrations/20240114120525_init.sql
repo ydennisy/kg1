@@ -3,9 +3,15 @@ create extension vector;
 create type
   url_status as enum (
     'RECEIVED_AWAITING_INDEXING',
-    'INDEXING_SKIPED_AS_RECENT_DUPLICATE',
+    'INDEXING_SKIPPED_AS_RECENT_DUPLICATE',
     'INDEXED_SUCCESSFULLY',
     'INDEXING_FAILED'
+  );
+
+create type
+  url_source as enum (
+    'WEB',
+    'EMAIL'
   );
 
 create table
@@ -13,9 +19,10 @@ create table
     id uuid primary key,
     user_id uuid not null,
     status url_status,
-    created_at timestamp with time zone not null default now(),
-    "url" text not null,
-    raw_url text not null
+    created_at timestamptz not null default now(),
+    "url" varchar not null,
+    raw_url varchar not null,
+    source url_source
   );
 
 alter table urls_feed enable row level security;
@@ -31,8 +38,8 @@ create table
     id uuid primary key,
     user_id uuid not null,
     url_feed_id uuid not null references urls_feed,
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now(),
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
     "url" text not null,
     title text not null,
     "text" text not null,
