@@ -22,4 +22,5 @@ jobs:
         with:
           version: latest
 
-      - run: supabase db reset --db-url postgres://postgres.$SUPABASE_PROJECT_ID:$SUPABASE_DB_PASSWORD@aws-0-eu-west-2.pooler.supabase.com:5432/postgres
+      - run: |
+          echo y | supabase db reset --db-url postgres://postgres.$SUPABASE_PROJECT_ID:$SUPABASE_DB_PASSWORD@aws-0-eu-west-2.pooler.supabase.com:5432/postgres
