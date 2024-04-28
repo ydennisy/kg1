@@ -18,7 +18,13 @@ class TextNodeChunk:
 
 class TextNode:
     def __init__(
-        self, url_feed_id: str, url: str, title: str, text: str, summary: str
+        self,
+        url_feed_id: str,
+        url: str,
+        title: str,
+        text: str,
+        summary: str,
+        concept_ids: list[int],
     ) -> None:
         self.id = uuid7()
         self.url_feed_id = url_feed_id
@@ -26,9 +32,14 @@ class TextNode:
         self.title = title
         self.text = text
         self.summary = summary
+        self._concept_ids = concept_ids
         self.embedding = None
         self.chunks: list[TextNodeChunk] = []
         self.create_title_if_missing()
+
+    @property
+    def concept_ids(self) -> list[int]:
+        return self._concept_ids
 
     def create_chunks(self, chunker: NodeChunker) -> None:
         self.chunks = chunker.chunk(self.id, self.text)
