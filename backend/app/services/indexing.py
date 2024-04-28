@@ -1,5 +1,6 @@
 from app.db import DB
 from app.llm import summarise_text
+from app.llm import extract_concepts
 from app.utils import URLProcessor
 from app.utils import URLProcessingResult
 from app.utils import NodeChunker
@@ -20,12 +21,16 @@ class IndexingService:
         for idx, processed_url in enumerate(processed_urls):
             try:
                 if isinstance(processed_url, URLProcessingResult):
+                    concepts = extract_concepts(processed_url.text)
+                    print(concepts)
+                    concept_ids = db.get_text_node_concept_ids(concepts)
                     text_node = TextNode(
                         url=processed_url.url,
                         url_feed_id=urls[idx].id,
                         title=processed_url.title,
                         text=processed_url.text,
                         summary=summarise_text(processed_url.text),
+                        concept_ids=concept_ids,
                     )
                     text_node.create_chunks(NodeChunker)
                     text_node.create_embeddings(NodeEmbedder)

@@ -89,17 +89,29 @@ class DB:
     def create_text_nodes(self, nodes: list[TextNode], user_id: str):
         text_nodes_to_persist = []
         text_node_chunks_to_persist = []
+        text_nodes_to_text_node_concepts_to_persist = []
         for node in nodes:
             text_node, text_node_chunks = node.to_persistence()
             text_node["user_id"] = user_id
+
             for chunk in text_node_chunks:
                 chunk["user_id"] = user_id
+
+            for concept_id in node.concept_ids:
+                text_nodes_to_text_node_concepts_to_persist.append(
+                    {"text_node_id": node.id, "text_node_concept_id": concept_id}
+                )
+
             text_nodes_to_persist.append(text_node)
             text_node_chunks_to_persist.extend(text_node_chunks)
 
         self._client.table("text_nodes").insert(text_nodes_to_persist).execute()
         self._client.table("text_node_chunks").insert(
             text_node_chunks_to_persist
+        ).execute()
+        print(text_nodes_to_text_node_concepts_to_persist)
+        self._client.table("text_node_to_text_node_concepts").insert(
+            text_nodes_to_text_node_concepts_to_persist
         ).execute()
 
     def get_urls_feed(self, user_id: str):
@@ -123,3 +135,26 @@ class DB:
         if len(result.data) != 1:
             return None
         return result.data[0]["id"]
+
+    def get_text_node_concept_ids(self, concepts: list[str]) -> list[int]:
+        existing_concepts = (
+            self._client.table("text_node_concepts")
+            .select("id, name")
+            .in_("name", concepts)
+            .execute()
+            .data
+        )
+
+        existing_concept_names = [c["name"] for c in existing_concepts]
+        new_concept_names = [
+            {"name": c} for c in concepts if c not in existing_concept_names
+        ]
+        new_concepts = (
+            self._client.table("text_node_concepts")
+            .insert(new_concept_names)
+            .execute()
+            .data
+        )
+        concept_ids = [c["id"] for c in (existing_concepts + new_concepts)]
+
+        return concept_ids
