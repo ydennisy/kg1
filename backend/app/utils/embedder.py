@@ -14,6 +14,10 @@ class NodeEmbedder:
 
         embeddings = []
         for text in texts:
+            # TODO: need a better more global way to handle overly long input documents.
+            words = text.split(" ")
+            if len(words) > 1024:
+                text = " ".join(words[:1024])
             response = client.embeddings.create(
                 input=text, model="text-embedding-3-small", dimensions=256
             )

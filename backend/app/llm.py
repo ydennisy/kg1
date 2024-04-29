@@ -58,6 +58,10 @@ def answer_with_context(chunks: List[dict], question: str) -> Generator[str, Any
 
 
 def summarise_text(text: str) -> str:
+    words = text.split(" ")
+    if len(words) > 1024:
+        text = " ".join(words[:1024])
+
     messages = [
         {
             "role": "system",

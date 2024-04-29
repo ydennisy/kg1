@@ -99,8 +99,8 @@ class PDFProcessor(BaseProcessor):
         pdf_pages = pdf_loader.load_data(file_path=temp_pdf_path, metadata=True)
         title = fitz.open(temp_pdf_path).metadata.get("title")
         temp_pdf_path.unlink()
-        pdf = pdf_pages[0]
-        text = pdf.text
+        pdf_pages_texts = [p.text for p in pdf_pages]
+        text = "\n\n".join(pdf_pages_texts)
         return URLProcessingResult(url=url, title=title, text=text)
 
 
@@ -140,7 +140,8 @@ class URLProcessor:
     def _get_processor(self, url: str) -> BaseProcessor:
         if "news.ycombinator.com/" in url:
             return self.processors["hn"]
-        elif url.endswith(".pdf"):
+        # TODO: need a proper fix here, by checking the mime type.
+        elif url.endswith(".pdf") or "/pdf/" in url:
             return self.processors["pdf"]
         else:
             return self.default_processor
