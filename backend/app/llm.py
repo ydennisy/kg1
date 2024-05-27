@@ -1,10 +1,14 @@
 import json
+from enum import Enum
 from typing import List, Generator, Any
 from openai import OpenAI
 
 client = OpenAI()
 
-MODEL_16K = "gpt-3.5-turbo-16k"
+
+class Models(Enum):
+    GPT_4o_LATEST = "gpt-4o"
+
 
 PROMPT_TEMPLATE = (
     "A question and context documents are provided below."
@@ -45,7 +49,7 @@ def answer_with_context(chunks: List[dict], question: str) -> Generator[str, Any
     ]
     stream = client.chat.completions.create(
         messages=messages,
-        model=MODEL_16K,
+        model=Models.GPT_4o_LATEST.value,
         stream=True,
         temperature=0,
     )
@@ -74,7 +78,7 @@ def summarise_text(text: str) -> str:
     ]
     result = client.chat.completions.create(
         messages=messages,
-        model=MODEL_16K,
+        model=Models.GPT_4o_LATEST.value,
         temperature=0,
     )
     return result.choices[0].message.content

@@ -53,14 +53,14 @@ def get_search_route(q: str, user=Depends(get_current_user)):
 
 
 @app.get("/api/ask")
-def get_ask_route(q: str, id: str = None, user=Depends(get_current_user)):
+async def get_ask_route(q: str, id: str = None, user=Depends(get_current_user)):
     user_id = user.id
     usage_count = db.increment_usage_counter()
     if usage_count > 1000:
         # TODO: handle this client side!
         raise HTTPException(429)
 
-    query_emb = NodeEmbedder.embed(q)
+    query_emb = await NodeEmbedder.embed(q)
     if id:
         # TODO: check this node belongs to the user requesting it!
         node = db.get_text_node(id)
@@ -152,3 +152,12 @@ async def post_index_route(request: Request):
         await indexing_service.index(urls, user_id)
     except Exception as ex:
         raise HTTPException(500) from ex
+
+
+@app.get("/api/me")
+async def get_profile_route(user=Depends(get_current_user)):
+    user_id = user.id
+    profile = db.get_user_profile_by_id(user_id)
+    if not profile:
+        raise HTTPException(404)
+    return profile
