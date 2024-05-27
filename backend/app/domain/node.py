@@ -33,14 +33,13 @@ class TextNode:
     def create_chunks(self, chunker: NodeChunker) -> None:
         self.chunks = chunker.chunk(self.id, self.text)
 
-    def create_embeddings(self, embedder: NodeEmbedder) -> None:
-        texts = [f"{self.url} {self.title} {self.text}"] + [
-            chunk.text for chunk in self.chunks
-        ]
-        embeddings = embedder.embed(texts)
+    async def create_embeddings(self, embedder: NodeEmbedder) -> None:
+        chunk_texts = [chunk.text for chunk in self.chunks]
+        embeddings = await embedder.embed([f"{self.url} {self.title} {self.text}"] + chunk_texts)
         self.embedding = embeddings[0]
-        for chunk, embedding in zip(self.chunks, embeddings[1:]):
-            chunk.embedding = embedding
+        chunk_embeddings = dict(zip(self.chunks, embeddings[1:]))
+        for chunk in self.chunks:
+            chunk.embedding = chunk_embeddings[chunk]
 
     # TODO: this can be done using an LLM.
     def create_title_if_missing(self) -> None:
