@@ -31,5 +31,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <p>{{ profile.name }}</p>
+  <p>ID: {{ profile.id }}</p>
+  <p>Email: {{ profile.email }}</p>
+  <p>App Email Alias: {{ profile.app_email_alias }}</p>
 </template>

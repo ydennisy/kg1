@@ -152,3 +152,9 @@ async def post_index_route(request: Request):
         await indexing_service.index(urls, user_id)
     except Exception as ex:
         raise HTTPException(500) from ex
+
+@app.get("/api/me")
+def get_me_route(user=Depends(get_current_user)):
+    user_id = user.id
+    user_data = db._client.table("users").select("id", "email", "app_email_alias").eq("id", user_id).execute().data[0]
+    return user_data
