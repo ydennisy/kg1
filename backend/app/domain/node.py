@@ -33,11 +33,11 @@ class TextNode:
     def create_chunks(self, chunker: NodeChunker) -> None:
         self.chunks = chunker.chunk(self.id, self.text)
 
-    def create_embeddings(self, embedder: NodeEmbedder) -> None:
+    async def create_embeddings(self, embedder: NodeEmbedder) -> None:
         texts = [f"{self.url} {self.title} {self.text}"] + [
             chunk.text for chunk in self.chunks
         ]
-        embeddings = embedder.embed(texts)
+        embeddings = await embedder.embed(texts)
         self.embedding = embeddings[0]
         for chunk, embedding in zip(self.chunks, embeddings[1:]):
             chunk.embedding = embedding

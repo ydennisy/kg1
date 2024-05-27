@@ -32,7 +32,7 @@ class IndexingService:
                         summary=summarise_text(processed_url.text),
                     )
                     text_node.create_chunks(NodeChunker)
-                    text_node.create_embeddings(NodeEmbedder)
+                    await text_node.create_embeddings(NodeEmbedder)
                     nodes.append(text_node)
                     urls[idx].set_indexing_success()
                 else:
