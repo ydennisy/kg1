@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request
+from fastapi import FastAPI, HTTPException, Depends, status, Request, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -112,12 +112,17 @@ class IndexPayload(BaseModel):
     urls: List[str]
 
 
-@app.post("/api/index", status_code=status.HTTP_201_CREATED)
-async def post_index_route(payload: IndexPayload, user=Depends(get_current_user)):
+@app.post("/api/index", status_code=status.HTTP_202_ACCEPTED)
+async def post_index_route(
+    payload: IndexPayload,
+    background_tasks: BackgroundTasks,
+    user=Depends(get_current_user),
+):
     try:
         user_id = user.id
         urls = [URL(url=url, source=URLSource.WEB) for url in payload.urls]
-        await indexing_service.index(urls, user_id)
+        # await indexing_service.index(urls, user_id)
+        background_tasks.add_task(indexing_service.index, urls, user_id)
     except Exception as ex:
         raise HTTPException(500) from ex
 

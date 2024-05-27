@@ -5,9 +5,13 @@ from typing import TYPE_CHECKING
 
 from supabase import create_client
 
+from app.utils import get_logger
+
 if TYPE_CHECKING:
     from app.domain import TextNode
     from app.domain import URL
+
+log = get_logger(__name__)
 
 
 class DB:
@@ -72,7 +76,7 @@ class DB:
         try:
             return self._client.table("urls_feed").insert(urls_to_persist).execute()
         except Exception as ex:
-            print(ex)
+            log.exception(ex)
 
     def update_urls(self, urls: list[URL]):
         for url in urls:
@@ -84,7 +88,7 @@ class DB:
                     .execute()
                 )
             except Exception as ex:
-                print(f"Failed to update URL with id {url.id}: {ex}")
+                log.exception(f"Failed to update URL with id {url.id}: {ex}")
 
     def create_text_nodes(self, nodes: list[TextNode], user_id: str):
         text_nodes_to_persist = []
