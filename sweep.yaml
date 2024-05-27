@@ -1,7 +1,6 @@
 rules:
   - "All new business logic should have corresponding unit tests."
-  - "Refactor large functions to be more modular."
-  - "Add docstrings to all functions and file headers."
+  - "Add documentation in complex areas of the code, which explain WHY something was implemented in a specific manner."
 
 branch: "main"
 gha_enabled: True

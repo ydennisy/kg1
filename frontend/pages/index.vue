@@ -22,7 +22,6 @@ const apiBase = config.public.apiBase;
 
 const indexWebPages = async () => {
   indexingStatusMessage.value = 'Indexing...';
-  const interval = startPollingIndexFeed();
   const token = useSupabaseSession().value?.access_token;
   // TODO: handle re-auth
   if (!token) return;
@@ -46,8 +45,11 @@ const indexWebPages = async () => {
     urlsCount.value = 0;
     urls.value = [];
     indexingStatusMessage.value = '';
-    clearInterval(interval);
   }, 3000);
+};
+
+const formatTimeToHumanFriendly = (time: string) => {
+  return formatDistance(new Date(time), new Date(), { addSuffix: true });
 };
 
 const fetchIndexedPages = async () => {
@@ -70,24 +72,21 @@ const fetchIndexedPages = async () => {
   }
 };
 
-const startPollingIndexFeed = () => {
-  const interval = setInterval(async () => {
+const fetchIndexedPagesIfTabInFocus = async () => {
+  if (document.hasFocus()) {
     await fetchIndexedPages();
-  }, 10000);
-
-  onUnmounted(() => {
-    clearInterval(interval);
-  });
-
-  return interval;
+  }
 };
 
-const formatTimeToHumanFriendly = (time: string) => {
-  return formatDistance(new Date(time), new Date(), { addSuffix: true });
-};
+let indexFeedPollingInterval: NodeJS.Timeout;
 
 onMounted(async () => {
   await fetchIndexedPages();
+  indexFeedPollingInterval = setInterval(fetchIndexedPagesIfTabInFocus, 10000);
+});
+
+onUnmounted(() => {
+  clearInterval(indexFeedPollingInterval);
 });
 
 watch(input, (newValue) => {
