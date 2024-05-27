@@ -127,3 +127,14 @@ class DB:
         if len(result.data) != 1:
             return None
         return result.data[0]["id"]
+    
+    def get_user_profile_by_id(self, user_id: str):
+        result = (
+            self._client.table("users")
+            .select("id, email, app_email_alias")
+            .eq("id", user_id)
+            .execute()
+        )
+        if len(result.data) != 1:
+            return None
+        return result.data[0]

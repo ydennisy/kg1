@@ -107,6 +107,14 @@ async def get_index_feed_route(user=Depends(get_current_user)):
     urls = db.get_urls_feed(user_id)
     return urls
 
+@app.get("/api/me")
+async def get_me_route(user=Depends(get_current_user)):
+    user_id = user.id
+    profile = db.get_user_profile_by_id(user_id)
+    if not profile:
+        raise HTTPException(404)
+    return profile
+
 
 class IndexPayload(BaseModel):
     urls: List[str]
