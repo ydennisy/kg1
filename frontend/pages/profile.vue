@@ -5,43 +5,25 @@ interface Profile {
   app_email_alias: string;
 }
 
-const profile = ref<Profile>({
-  id: '',
-  email: '',
-  app_email_alias: '',
-});
+import { useUserStore } from '~/stores/userStore';
 
-const config = useRuntimeConfig();
-const apiBase = config.public.apiBase;
+const userStore = useUserStore();
 
-const fetchProfile = async () => {
-  const token = useSupabaseSession().value?.access_token;
-  // TODO: handle re-auth
-  if (!token) return;
-  const { data } = await useFetch<Profile>(`${apiBase}/api/me`, {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (data.value) {
-    profile.value = data.value;
-  }
-};
-
-onMounted(async () => {
-  await fetchProfile();
-});
+const profile = computed(() => ({
+  id: userStore.id,
+  email: userStore.email,
+  app_email_alias: userStore.app_email_alias,
+}));
 </script>
 
 <template>
   <div class="p-4">
     <h1 class="text-2xl font-bold mb-4 text-slate-700">Profile</h1>
     <p class="text-lg mb-2 text-slate-800">
-      <strong>Email:</strong> {{ profile.email }}
+      <strong>Email:</strong> {{ userStore.email }}
     </p>
     <p class="text-lg text-slate-800">
-      <strong>App Email Alias:</strong> {{ profile.app_email_alias }}
+      <strong>App Email Alias:</strong> {{ userStore.app_email_alias }}
     </p>
   </div>
 </template>
