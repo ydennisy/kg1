@@ -16,6 +16,9 @@ const urlsCount = ref(0);
 const urls = ref();
 const indexingStatusMessage = ref('');
 const indexFeedResults = ref<IndexFeedResult[]>([]);
+const isTableLoading = ref(true);
+const isTableEmpty = ref(false);
+const isTableRefreshing = ref(false);
 
 const config = useRuntimeConfig();
 const apiBase = config.public.apiBase;
@@ -67,14 +70,19 @@ const fetchIndexedPages = async () => {
   );
   if (data.value) {
     indexFeedResults.value = data.value;
+    isTableEmpty.value = data.value.length === 0;
   } else {
     indexFeedResults.value = [];
+    isTableEmpty.value = true;
   }
+  isTableLoading.value = false;
 };
 
 const fetchIndexedPagesIfTabInFocus = async () => {
   if (document.hasFocus()) {
+    isTableRefreshing.value = true;
     await fetchIndexedPages();
+    isTableRefreshing.value = false;
   }
 };
 
@@ -133,17 +141,42 @@ watch(input, (newValue) => {
     </button>
   </div>
 
+  <!-- Loading Indicator -->
+  <div v-if="isTableLoading" class="mt-4 text-center">
+    <span class="text-gray-500">Loading...</span>
+  </div>
+  
+  <!-- Empty State Banner -->
+  <div
+    v-else-if="isTableEmpty"
+    class="bg-blue-100 border border-blue-300 text-blue-600 mt-4 px-4 py-2 rounded-md relative"
+    role="alert"
+  >
+    <strong class="font-bold text-xs">Nothing indexed yet.</strong>
+    <span class="block sm:inline text-xs">
+      Please <NuxtLink class="font-bold text-blue-600 underline" to="/index">index</NuxtLink> some relevant documents.
+    </span>
+  </div>
+  
   <!-- URL Index Feed Table -->
   <table
+    v-else
     class="rounded-md mt-2 border-collapse table-auto w-full"
-    v-if="indexFeedResults.length"
   >
     <thead class="bg-gray-200">
       <tr>
         <th class="rounded-tl-md py-2 px-4 text-left">URL</th>
         <th class="py-2 px-4 text-left">Submitted</th>
         <th class="py-2 px-4 text-left">Source</th>
-        <th class="rounded-tr-md py-2 px-4 text-left">Status</th>
+        <th class="rounded-tr-md py-2 px-4 text-left">
+          Status
+          <span v-if="isTableRefreshing" class="ml-2 text-gray-500">
+            <svg class="animate-spin h-4 w-4 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </span>
+        </th>
       </tr>
     </thead>
     <tbody>
