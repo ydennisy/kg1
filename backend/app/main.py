@@ -1,7 +1,15 @@
 import json
-from typing import List, Literal
+from typing import List, Literal, Annotated
 
-from fastapi import FastAPI, HTTPException, Depends, status, Request, BackgroundTasks
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    Depends,
+    status,
+    Request,
+    BackgroundTasks,
+    Query,
+)
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,11 +18,8 @@ from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 from app.db import DB
 from app.llm import answer_with_context
-from app.utils import NodeEmbedder
-from app.utils import get_current_user
-from app.utils import parse_urls_from_text
+from app.utils import NodeEmbedder, get_current_user, parse_urls_from_text
 from app.domain import URL, URLSource
-
 from app.services import IndexingService
 
 
@@ -61,7 +66,12 @@ async def get_search_route(
 
 
 @app.get("/api/ask")
-async def get_ask_route(q: str, id: str = None, user=Depends(get_current_user)):
+async def get_ask_route(
+    q: str,
+    id: Annotated[list[str] | None, Query()] = None,
+    user=Depends(get_current_user),
+):
+    node_ids = id
     user_id = user.id
     usage_count = db.increment_usage_counter()
     if usage_count > 1000:
@@ -69,11 +79,14 @@ async def get_ask_route(q: str, id: str = None, user=Depends(get_current_user)):
         raise HTTPException(429)
 
     query_emb = await NodeEmbedder.embed(q)
-    if id:
+    if len(node_ids) > 0:
         # TODO: check this node belongs to the user requesting it!
-        node = db.get_text_node(id)
-        del node["embedding"]
-        chunks = [node]
+        # TODO: add a method to fetch multiple items in one query!
+        chunks = []
+        for id in node_ids:
+            node = db.get_text_node(id)
+            del node["embedding"]
+            chunks.append(node)
     else:
         chunks = db.search_text_node_chunks(query_emb, user_id=user_id)
         # NOTE: this is best moved into the DB query when we find the correct value.

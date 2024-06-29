@@ -1,11 +1,47 @@
 <script setup lang="ts">
+import 'katex/dist/katex.min.css';
+import 'highlight.js/styles/a11y-light.css';
 import md from 'markdown-it';
+import mdm from '@traptitech/markdown-it-katex';
+import hljs from 'highlight.js';
 
-const renderer = md();
+const renderer = md({
+  highlight: function (str: string, lang: string) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return (
+          '<pre><code class="hljs">' +
+          hljs.highlight(str, { language: lang, ignoreIllegals: true }).value +
+          '</code></pre>'
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    return '<pre><code class="hljs">' + str + '</code></pre>';
+  },
+});
+
+renderer.use(mdm, {
+  displayMode: false,
+  blockClass: 'math-block',
+  errorColor: ' #cc0000',
+  output: 'html',
+  delimiters: [
+    { left: '$$', right: '$$', display: true },
+    { left: '$', right: '$', display: false },
+    { left: '\\[', right: '\\]', display: true },
+    { left: '\\(', right: '\\)', display: false },
+  ],
+});
+
 const results = ref('');
 const context = ref([]);
 const isLoading = ref(false);
+// TODO: refactor for a more general interface
 const isAskWithNode = ref(false);
+const isAskWithNodes = ref(false);
 
 const config = useRuntimeConfig();
 const route = useRoute();
@@ -13,8 +49,10 @@ const router = useRouter();
 
 const apiBase = config.public.apiBase;
 const nodeId = route.query.id;
+const nodeIds = route.query.ids;
 const nodeTitle = route.query.title;
 isAskWithNode.value = !!nodeId;
+isAskWithNodes.value = !!nodeIds;
 
 const chat = async (query: string) => {
   isLoading.value = true;
@@ -28,7 +66,17 @@ const chat = async (query: string) => {
   // TODO: handle re-auth
   if (!token) return;
   let apiUrl = `${apiBase}/api/ask?q=${encodeURIComponent(query)}`;
-  apiUrl = isAskWithNode.value ? `${apiUrl}&id=${nodeId}` : `${apiUrl}`;
+
+  if (isAskWithNode.value) {
+    apiUrl = `${apiUrl}&id=${nodeId}`;
+  }
+  // TODO: improve this logic!
+  if (isAskWithNodes.value && typeof nodeIds === 'string') {
+    for (const id of nodeIds.split(',')) {
+      apiUrl += `&id=${id}`;
+    }
+  }
+
   const response = await fetch(apiUrl, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -78,6 +126,10 @@ const clearAskWithNode = async () => {
   isAskWithNode.value = false;
   context.value = [];
 };
+
+const preProcessLatex = (text: string) => {
+  return text.replace(/\\/g, '\\\\');
+};
 </script>
 
 <template>
@@ -109,8 +161,65 @@ const clearAskWithNode = async () => {
     </div>
 
     <!-- Streamed Markdown Area -->
-    <div class="mt-4">
+    <div class="mt-4 markdown-body">
       <p v-html="renderer.render(results)"></p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial,
+    sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.markdown-body :deep(h1),
+.markdown-body :deep(h2),
+.markdown-body :deep(h3),
+.markdown-body :deep(h4),
+.markdown-body :deep(h5),
+.markdown-body :deep(h6) {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.markdown-body :deep(h1) {
+  font-size: 2em;
+}
+.markdown-body :deep(h2) {
+  font-size: 1.5em;
+}
+.markdown-body :deep(h3) {
+  font-size: 1.25em;
+}
+
+.markdown-body :deep(ul),
+.markdown-body :deep(ol) {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body :deep(li) {
+  margin-top: 0.25em;
+}
+
+.markdown-body :deep(pre) {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}
+</style>

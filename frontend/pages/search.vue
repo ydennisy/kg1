@@ -11,10 +11,13 @@ const isLoading = ref(false);
 const isResultsEmpty = ref(false);
 const lastSearchQuery = ref('');
 const searchMode = ref('');
+const contextIds = ref<string[]>([]);
 
 const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
+
+const contextCount = computed(() => contextIds.value.length);
 
 const apiBase = config.public.apiBase;
 
@@ -48,8 +51,22 @@ const setSearchMode = (mode: string) => {
   searchMode.value = mode.toLocaleLowerCase();
 };
 
+const handleAddToContextCheckboxClick = (id: string) => {
+  const indexOfId = contextIds.value.indexOf(id);
+  if (indexOfId === -1) {
+    contextIds.value.push(id);
+  } else {
+    contextIds.value.splice(indexOfId, 1);
+  }
+};
+
 const navigateToNode = (id: string) => {
   router.push({ path: `/node`, query: { id } });
+};
+
+const navigateToAsk = () => {
+  const ids = contextIds.value.join(',');
+  router.push({ path: `/ask`, query: { ids } });
 };
 
 onMounted(async () => {
@@ -105,7 +122,18 @@ onMounted(async () => {
     <thead class="bg-gray-200">
       <tr>
         <th class="rounded-tl-md py-2 px-4 text-left">Title</th>
-        <th class="rounded-tr-md py-2 px-4 text-left">Score</th>
+        <th class="py-2 px-4 w32">
+          <div class="flex justify-center">
+            <button
+              v-if="contextCount > 0"
+              class="font-bold text-blue-600 underline"
+              @click.prevent="navigateToAsk"
+            >
+              Context ({{ contextCount }})
+            </button>
+            <span v-else>Context</span>
+          </div>
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -128,7 +156,13 @@ onMounted(async () => {
             </div>
           </div>
         </td>
-        <td class="py-2 px-4 text-sm text-slate-600">{{ item.score }}</td>
+        <td class="py-2 px-4 text-center w-32">
+          <input
+            type="checkbox"
+            @change="handleAddToContextCheckboxClick(item.id)"
+            @click.stop
+          />
+        </td>
       </tr>
     </tbody>
   </table>

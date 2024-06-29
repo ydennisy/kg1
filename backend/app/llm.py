@@ -18,6 +18,7 @@ PROMPT_TEMPLATE = (
     "You will be provided a JSON line for each context document, which contains <text>, <title> & <url> keys."
     "At the END of your reply (not inline), you should list all unique sources using the <title> & <url> keys."
     "Answer using Markdown."
+    "Use KaTex compatible syntax when replying with maths, MAKE SURE TO wrap inline equations with $ and use two ($$) for block rendering."
     "---------------------\n"
     "CONTEXT:\n"
     "{context}"

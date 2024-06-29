@@ -20,7 +20,9 @@
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.21",
+    "@traptitech/markdown-it-katex": "^3.6.0",
     "date-fns": "^3.6.0",
+    "highlight.js": "^11.9.0",
     "markdown-it": "^14.1.0"
   }
 }
