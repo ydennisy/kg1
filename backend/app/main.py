@@ -79,7 +79,7 @@ async def get_ask_route(
         raise HTTPException(429)
 
     query_emb = await NodeEmbedder.embed(q)
-    if len(node_ids) > 0:
+    if node_ids:
         # TODO: check this node belongs to the user requesting it!
         # TODO: add a method to fetch multiple items in one query!
         chunks = []

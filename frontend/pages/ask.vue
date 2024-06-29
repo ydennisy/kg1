@@ -49,10 +49,14 @@ const router = useRouter();
 
 const apiBase = config.public.apiBase;
 const nodeId = route.query.id;
-const nodeIds = route.query.ids;
+const nodeIds = Array.isArray(route.query.ids)
+  ? route.query.ids
+  : typeof route.query.ids === 'string'
+  ? route.query.ids.split(',')
+  : [];
 const nodeTitle = route.query.title;
 isAskWithNode.value = !!nodeId;
-isAskWithNodes.value = !!nodeIds;
+isAskWithNodes.value = nodeIds.length > 0;
 
 const chat = async (query: string) => {
   isLoading.value = true;
@@ -71,8 +75,8 @@ const chat = async (query: string) => {
     apiUrl = `${apiUrl}&id=${nodeId}`;
   }
   // TODO: improve this logic!
-  if (isAskWithNodes.value && typeof nodeIds === 'string') {
-    for (const id of nodeIds.split(',')) {
+  if (isAskWithNodes.value) {
+    for (const id of nodeIds) {
       apiUrl += `&id=${id}`;
     }
   }
@@ -124,11 +128,8 @@ const chat = async (query: string) => {
 const clearAskWithNode = async () => {
   await router.replace({});
   isAskWithNode.value = false;
+  isAskWithNodes.value = false;
   context.value = [];
-};
-
-const preProcessLatex = (text: string) => {
-  return text.replace(/\\/g, '\\\\');
 };
 </script>
 
@@ -137,7 +138,7 @@ const preProcessLatex = (text: string) => {
     <!-- Search Bar -->
     <SearchBar :is-loading="isLoading" @search="chat" />
 
-    <!-- Notification Banner -->
+    <!-- Notification Banner (single node) -->
     <div
       v-if="isAskWithNode"
       class="bg-gray-100 border border-gray-300 text-slate-600 mt-2 px-4 py-2 rounded-md relative"
@@ -147,6 +148,24 @@ const preProcessLatex = (text: string) => {
         >You are using the document
         <strong class="font-bold text-xs">"{{ nodeTitle }}"</strong> as context
         for your question, to use all documents
+        <strong
+          class="underline cursor-pointer font-bold text-xs"
+          @click="clearAskWithNode"
+          >click here</strong
+        >.</span
+      >
+    </div>
+
+    <!-- Notification Banner (multi node) -->
+    <div
+      v-if="isAskWithNodes"
+      class="bg-gray-100 border border-gray-300 text-slate-600 mt-2 px-4 py-2 rounded-md relative"
+      role="alert"
+    >
+      <span class="block sm:inline text-xs"
+        >You are using
+        <strong class="font-bold text-xs">"{{ nodeIds.length }}"</strong>
+        documents as context for your question, to use all documents
         <strong
           class="underline cursor-pointer font-bold text-xs"
           @click="clearAskWithNode"
