@@ -51,7 +51,7 @@ def answer_with_context(chunks: List[dict], question: str) -> Generator[str, Any
         messages=messages,
         model=Models.GPT_4o_LATEST.value,
         stream=True,
-        temperature=0,
+        temperature=0.5,
     )
     for chunk in stream:
         content = chunk.choices[0].delta.content

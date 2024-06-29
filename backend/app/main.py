@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Literal
 
 from fastapi import FastAPI, HTTPException, Depends, status, Request, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
@@ -45,11 +45,19 @@ async def get_health():
 
 
 @app.get("/api/search")
-def get_search_route(q: str, user=Depends(get_current_user)):
+async def get_search_route(
+    q: str, mode: Literal["hybrid", "dense"], user=Depends(get_current_user)
+):
     user_id = user.id
-    query_emb = NodeEmbedder.embed(q)
-    pages = db.search_pages(query_emb, user_id=user_id, threshold=0.4)
-    return pages
+    query_emb = await NodeEmbedder.embed(q)
+    if mode == "hybrid":
+        pages = db.hybrid_search_text_nodes(q, query_emb)
+        return pages
+    elif mode == "dense":
+        pages = db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
+        return pages
+    else:
+        raise HTTPException(400)
 
 
 @app.get("/api/ask")
@@ -67,7 +75,7 @@ async def get_ask_route(q: str, id: str = None, user=Depends(get_current_user)):
         del node["embedding"]
         chunks = [node]
     else:
-        chunks = db.search_chunks(query_emb, user_id=user_id)
+        chunks = db.search_text_node_chunks(query_emb, user_id=user_id)
         # NOTE: this is best moved into the DB query when we find the correct value.
         chunks = [c for c in chunks if c["score"] >= 0.4]
 
@@ -91,7 +99,7 @@ async def get_node_route(id: str, user=Depends(get_current_user)):
         raise HTTPException(429)
 
     node = db.get_text_node(id)
-    related_nodes = db.search_pages(
+    related_nodes = db.search_text_nodes(
         node["embedding"], user_id=user_id, threshold=0.4, top_n=5
     )
     related_nodes = [n for n in related_nodes if n["id"] != id]

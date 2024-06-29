@@ -10,6 +10,7 @@ const results = ref<SearchResult[]>([]);
 const isLoading = ref(false);
 const isResultsEmpty = ref(false);
 const lastSearchQuery = ref('');
+const searchMode = ref('');
 
 const config = useRuntimeConfig();
 const router = useRouter();
@@ -27,7 +28,7 @@ const search = async (query: string) => {
   if (!token) return;
   const { data } = await useFetch<SearchResult[]>(`${apiBase}/api/search`, {
     method: 'GET',
-    query: { q: query },
+    query: { q: query, mode: searchMode.value },
     headers: { Authorization: `Bearer ${token}` },
   });
   // TODO: handle re-auth
@@ -43,6 +44,10 @@ const search = async (query: string) => {
   isLoading.value = false;
 };
 
+const setSearchMode = (mode: string) => {
+  searchMode.value = mode.toLocaleLowerCase();
+};
+
 const navigateToNode = (id: string) => {
   router.push({ path: `/node`, query: { id } });
 };
@@ -56,7 +61,11 @@ onMounted(async () => {
 
 <template>
   <!-- Search Bar -->
-  <SearchBar :is-loading="isLoading" @search="search" />
+  <SearchBar :is-loading="isLoading" @search="search">
+    <template #toggle>
+      <Toggle @toggled="setSearchMode" on="Hybrid" off="Dense" />
+    </template>
+  </SearchBar>
 
   <!-- Notification Banner -->
   <div

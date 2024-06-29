@@ -4,13 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-unstructured = {extras = ["pdf", "md"], version = "*"}
-llama-index-readers-file = "*"
-langchain = "*"
 trafilatura = "*"
 lxml = "*"
 requests = "*"
-pymupdf = "*"
+instructor = "*"
+openai = "*"
+python-dotenv = "*"
+google-cloud-language = "*"
+supabase = "*"
 
 [dev-packages]
 ipykernel = "*"

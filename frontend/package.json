@@ -6,16 +6,17 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "upgrade:nuxt": "npx nuxi@latest upgrade --force"
   },
   "devDependencies": {
     "@nuxtjs/supabase": "^1.2.2",
     "@nuxtjs/tailwindcss": "^6.12.0",
     "@pinia/nuxt": "^0.5.1",
     "@types/markdown-it": "^14.1.1",
-    "nuxt": "^3.11.2",
-    "vue": "^3.4.27",
-    "vue-router": "^4.3.2"
+    "nuxt": "^3.12.2",
+    "vue": "^3.4.31",
+    "vue-router": "^4.4.0"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.21",

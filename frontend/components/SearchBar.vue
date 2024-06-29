@@ -33,6 +33,7 @@ const onSearch = async () => {
     />
     <div class="absolute inset-y-0 right-0 flex items-center pr-3">
       <Spinner v-if="isLoading" />
+      <slot name="toggle" />
     </div>
   </div>
 </template>

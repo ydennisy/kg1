@@ -44,6 +44,7 @@ create table
     title text not null,
     "text" text not null,
     summary text not null,
+    fts tsvector generated always as (to_tsvector('english', "text")) stored,
     embedding vector(256)
   );
 
@@ -54,6 +55,13 @@ create index
     user_id
   );
 
+-- Create an index for the full-text search
+create index
+  on text_nodes using gin(
+    fts
+  );
+
+-- Create an index for the semantic vector search
 create index 
   on text_nodes using hnsw (
     embedding vector_ip_ops
@@ -101,7 +109,7 @@ end;
 $$;
 
 
-create or replace function search_chunks (
+create or replace function search_text_node_chunks (
   query_embedding vector(256),
   user_id_filter uuid,
   threshold float default 0.5,
@@ -135,7 +143,7 @@ as $$
   limit top_n;
 $$;
 
-create or replace function search_pages (
+create or replace function search_text_nodes (
   query_embedding vector(256),
   user_id_filter uuid,
   threshold float default 0.5,
@@ -164,4 +172,59 @@ as $$
   from ranked
   where score >= threshold
   limit top_n;
+$$;
+
+create or replace function hybrid_search_text_nodes(
+  query_text text,
+  query_embedding vector(256),
+  match_count int,
+  full_text_weight float = 1,
+  semantic_weight float = 1,
+  rrf_k int = 50
+)
+returns table (
+  id uuid,
+  "url" text,
+  title text,
+  score float
+)
+language sql
+as $$
+with full_text as (
+  select
+    id,
+    -- Note: ts_rank_cd is not indexable but will only rank matches of the where clause
+    -- which shouldn't be too big
+    row_number() over(order by ts_rank_cd(fts, websearch_to_tsquery(query_text)) desc) as rank_ix
+  from
+    text_nodes
+  where
+    fts @@ websearch_to_tsquery(query_text)
+  order by rank_ix
+  limit least(match_count, 30) * 2
+),
+semantic as (
+  select
+    id,
+    row_number() over (order by embedding <#> query_embedding) as rank_ix
+  from
+    text_nodes
+  order by rank_ix
+  limit least(match_count, 30) * 2
+)
+select
+  text_nodes.id,
+  text_nodes.url,
+  text_nodes.title,
+  coalesce(1.0 / (rrf_k + full_text.rank_ix), 0.0) * full_text_weight +
+  coalesce(1.0 / (rrf_k + semantic.rank_ix), 0.0) * semantic_weight as score
+from
+  full_text
+  full outer join semantic
+    on full_text.id = semantic.id
+  join text_nodes
+    on coalesce(full_text.id, semantic.id) = text_nodes.id
+order by score desc
+limit
+  least(match_count, 30)
 $$;

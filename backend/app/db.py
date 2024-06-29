@@ -24,11 +24,11 @@ class DB:
         result = self._client.rpc("update_usage_counter").execute()
         return result.data
 
-    def search_pages(
+    def search_text_nodes(
         self, emb: list[float], user_id: str, threshold: float = 0.5, top_n: int = 10
     ):
         result = self._client.rpc(
-            "search_pages",
+            "search_text_nodes",
             {
                 "query_embedding": emb,
                 "user_id_filter": user_id,
@@ -36,13 +36,13 @@ class DB:
                 "top_n": top_n,
             },
         ).execute()
-        return result.data
+        return result.data if result.data else []
 
-    def search_chunks(
+    def search_text_node_chunks(
         self, emb: list[float], user_id: str, threshold: float = 0.5, top_n: int = 10
     ):
         result = self._client.rpc(
-            "search_chunks",
+            "search_text_node_chunks",
             {
                 "query_embedding": emb,
                 "user_id_filter": user_id,
@@ -50,7 +50,14 @@ class DB:
                 "top_n": top_n,
             },
         ).execute()
-        return result.data
+        return result.data if result.data else []
+
+    def hybrid_search_text_nodes(self, text: str, emb: list[float]):
+        result = self._client.rpc(
+            "hybrid_search_text_nodes",
+            {"query_text": text, "query_embedding": emb, "match_count": 10},
+        ).execute()
+        return result.data if result.data else []
 
     def get_text_node(self, id: str):
         result = (
