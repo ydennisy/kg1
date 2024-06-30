@@ -11,13 +11,19 @@ const isLoading = ref(false);
 const isResultsEmpty = ref(false);
 const lastSearchQuery = ref('');
 const searchMode = ref('');
-const contextIds = ref<string[]>([]);
+const selectedContextIds = ref<Set<string>>(new Set());
+
+const selectedContextTitles = computed(() => {
+  return results.value
+    .filter((item) => selectedContextIds.value.has(item.id))
+    .map((item) => item.title);
+});
 
 const config = useRuntimeConfig();
 const router = useRouter();
 const route = useRoute();
 
-const contextCount = computed(() => contextIds.value.length);
+const contextCount = computed(() => selectedContextIds.value.size);
 
 const apiBase = config.public.apiBase;
 
@@ -25,6 +31,9 @@ const search = async (query: string) => {
   isLoading.value = true;
   isResultsEmpty.value = false;
   lastSearchQuery.value = query;
+
+  // NOTE: this adds the query to the current URL.
+  router.push({ path: route.path, query: { q: query } });
 
   const token = useSupabaseSession().value?.access_token;
   // TODO: handle re-auth
@@ -34,13 +43,13 @@ const search = async (query: string) => {
     query: { q: query, mode: searchMode.value },
     headers: { Authorization: `Bearer ${token}` },
   });
-  // TODO: handle re-auth
+
   if (!data.value) {
     results.value = [];
   } else {
     results.value = data.value;
   }
-  router.push({ path: route.path, query: { q: query } });
+
   if (results.value.length === 0) {
     isResultsEmpty.value = true;
   }
@@ -52,11 +61,10 @@ const setSearchMode = (mode: string) => {
 };
 
 const handleAddToContextCheckboxClick = (id: string) => {
-  const indexOfId = contextIds.value.indexOf(id);
-  if (indexOfId === -1) {
-    contextIds.value.push(id);
+  if (selectedContextIds.value.has(id)) {
+    selectedContextIds.value.delete(id);
   } else {
-    contextIds.value.splice(indexOfId, 1);
+    selectedContextIds.value.add(id);
   }
 };
 
@@ -65,7 +73,7 @@ const navigateToNode = (id: string) => {
 };
 
 const navigateToAsk = () => {
-  const ids = contextIds.value.join(',');
+  const ids = [...selectedContextIds.value].join(',');
   router.push({ path: `/ask`, query: { ids } });
 };
 
@@ -122,7 +130,7 @@ onMounted(async () => {
     <thead class="bg-gray-200">
       <tr>
         <th class="rounded-tl-md py-2 px-4 text-left">Title</th>
-        <th class="py-2 px-4 w32">
+        <th class="py-2 px-4 w32 relative group">
           <div class="flex justify-center">
             <button
               v-if="contextCount > 0"
@@ -132,6 +140,20 @@ onMounted(async () => {
               Context ({{ contextCount }})
             </button>
             <span v-else>Context</span>
+          </div>
+          <div
+            v-if="contextCount > 0"
+            class="absolute z-10 w-72 p-2 mt-1 font-normal text-xs bg-white rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+          >
+            <ul class="mt-1 list-disc list-inside">
+              <li
+                v-for="title in selectedContextTitles"
+                :key="title"
+                class="truncate"
+              >
+                {{ title }}
+              </li>
+            </ul>
           </div>
         </th>
       </tr>
@@ -159,6 +181,7 @@ onMounted(async () => {
         <td class="py-2 px-4 text-center w-32">
           <input
             type="checkbox"
+            :checked="selectedContextIds.has(item.id)"
             @change="handleAddToContextCheckboxClick(item.id)"
             @click.stop
           />
@@ -167,3 +190,10 @@ onMounted(async () => {
     </tbody>
   </table>
 </template>
+
+<style>
+.group:hover .absolute {
+  left: 50%;
+  transform: translateX(-50%);
+}
+</style>
