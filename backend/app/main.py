@@ -2,6 +2,8 @@ import os
 import json
 from typing import List, Literal, Annotated
 
+import umap
+import numpy as np
 from fastapi import (
     FastAPI,
     HTTPException,
@@ -54,6 +56,34 @@ app.add_middleware(
 @app.get("/api/health")
 async def get_health():
     return {"STATUS": "OK"}
+
+
+@app.get("/api/explore")
+async def get_explore_route(user=Depends(get_current_user)):
+    user_id = user.id
+    nodes = db.get_text_node_embeddings(user_id)
+    embeddings = [node["embedding"] for node in nodes]
+    reducer = umap.UMAP(random_state=42, min_dist=0.0, metric="cosine")
+    embeddings_2d = reducer.fit_transform(embeddings)
+
+    # Calculate means
+    mean_x = np.mean(embeddings_2d[:, 0])
+    mean_y = np.mean(embeddings_2d[:, 1])
+
+    # Center the data
+    embeddings_2d[:, 0] -= mean_x
+    embeddings_2d[:, 1] -= mean_y
+
+    # Scale to a specific range (e.g., -1 to 1)
+    max_abs = np.max(np.abs(embeddings_2d))
+    embeddings_2d /= max_abs
+
+    for idx, node in enumerate(nodes):
+        del node["embedding"]
+        node["x"] = float(embeddings_2d[idx][0])
+        node["y"] = float(embeddings_2d[idx][1])
+        node["cluster"] = 0
+    return nodes
 
 
 @app.get("/api/search")

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import json
 from typing import TYPE_CHECKING
 
 from supabase import create_client
@@ -155,3 +156,18 @@ class DB:
             .execute()
         )
         return result.data[0] if result.data else None
+
+    def get_text_node_embeddings(self, user_id: str):
+        result = (
+            self._client.table("text_nodes")
+            .select("id,title,embedding")
+            .eq("user_id", user_id)
+            .limit(1000)
+            .execute()
+        )
+        # NOTE: this is temporary as we should make 2d values on /index
+        if result.data:
+            for item in result.data:
+                if isinstance(item["embedding"], str):
+                    item["embedding"] = json.loads(item["embedding"])
+        return result.data if result.data else []
