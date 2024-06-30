@@ -6,9 +6,9 @@ from app.utils.uuid import uuid7
 
 class URLStatus(Enum):
     RECEIVED_AWAITING_INDEXING = "RECEIVED_AWAITING_INDEXING"
-    INDEXING_SKIPPED_AS_RECENT_DUPLICATE = "INDEXING_SKIPPED_AS_RECENT_DUPLICATE"
     INDEXED_SUCCESSFULLY = "INDEXED_SUCCESSFULLY"
     INDEXING_FAILED = "INDEXING_FAILED"
+    INDEXING_SKIPPED_AS_DUPLICATE = "INDEXING_SKIPPED_AS_DUPLICATE"
 
 
 class URLSource(Enum):
@@ -55,6 +55,9 @@ class URL:
 
     def set_indexing_failure(self):
         self._status = URLStatus.INDEXING_FAILED
+
+    def set_indexing_skipped_due_to_duplicate(self):
+        self._status = URLStatus.INDEXING_SKIPPED_AS_DUPLICATE
 
     def to_persistence(self) -> URLPersistence:
         return {

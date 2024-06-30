@@ -3,9 +3,9 @@ create extension vector;
 create type
   url_status as enum (
     'RECEIVED_AWAITING_INDEXING',
-    'INDEXING_SKIPPED_AS_RECENT_DUPLICATE',
     'INDEXED_SUCCESSFULLY',
-    'INDEXING_FAILED'
+    'INDEXING_FAILED',
+    'INDEXING_SKIPPED_AS_DUPLICATE'
   );
 
 create type
@@ -32,7 +32,6 @@ create index
     user_id
   );
 
--- TODO: do not allow dupe URLs?
 create table
   public.text_nodes (
     id uuid primary key,
@@ -48,6 +47,7 @@ create table
     embedding vector(256)
   );
 
+alter table text_nodes add constraint unique_url unique (url);
 alter table text_nodes enable row level security;
 
 create index

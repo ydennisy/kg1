@@ -1,3 +1,4 @@
+import os
 import json
 from typing import List, Literal, Annotated
 
@@ -9,6 +10,7 @@ from fastapi import (
     Request,
     BackgroundTasks,
     Query,
+    Header,
 )
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import StreamingResponse
@@ -18,7 +20,12 @@ from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 from app.db import DB
 from app.llm import answer_with_context
-from app.utils import NodeEmbedder, get_current_user, parse_urls_from_text
+from app.utils import (
+    NodeEmbedder,
+    get_current_user,
+    parse_urls_from_text,
+    get_user_by_id,
+)
 from app.domain import URL, URLSource
 from app.services import IndexingService
 
@@ -142,7 +149,6 @@ async def post_index_route(
     try:
         user_id = user.id
         urls = [URL(url=url, source=URLSource.WEB) for url in payload.urls]
-        # await indexing_service.index(urls, user_id)
         background_tasks.add_task(indexing_service.index, urls, user_id)
     except Exception as ex:
         raise HTTPException(500) from ex
@@ -182,3 +188,23 @@ async def get_profile_route(user=Depends(get_current_user)):
     if not profile:
         raise HTTPException(404)
     return profile
+
+
+@app.post("/api/admin/index", status_code=status.HTTP_202_ACCEPTED)
+async def admin_index_route(
+    payload: IndexPayload,
+    user_id: str,
+    x_admin_api_key: str = Header(...),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
+):
+    if x_admin_api_key != os.getenv("ADMIN_API_KEY"):
+        raise HTTPException(status_code=401, detail="Invalid admin key")
+
+    try:
+        get_user_by_id(user_id)
+    except Exception as ex:
+        print(ex)
+        raise HTTPException(status_code=404, detail="User not found")
+
+    urls = [URL(url=url, source=URLSource.WEB) for url in payload.urls]
+    background_tasks.add_task(indexing_service.index, urls, user_id)

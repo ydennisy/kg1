@@ -25,3 +25,7 @@ def get_current_user(authorization: Annotated[str | None, Header()] = None):
         raise HTTPException(status_code=401, detail="User not found.")
 
     return user.user
+
+
+def get_user_by_id(id: str):
+    return client.auth.admin.get_user_by_id(id)

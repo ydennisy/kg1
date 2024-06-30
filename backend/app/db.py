@@ -145,3 +145,13 @@ class DB:
         if len(result.data) != 1:
             return None
         return result.data[0]
+
+    def get_text_node_by_url(self, url: str):
+        result = (
+            self._client.table("text_nodes")
+            .select("id")
+            .eq("url", url)
+            .limit(1)
+            .execute()
+        )
+        return result.data[0] if result.data else None

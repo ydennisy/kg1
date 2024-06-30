@@ -14,6 +14,7 @@ const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
 
+// TODO: this behaviour is buggy, we cannot logout if we are logged out!
 const logout = async () => {
   const { error } = await supabaseClient.auth.signOut();
 

@@ -24,6 +24,14 @@ class IndexingService:
         for idx, processed_url in enumerate(processed_urls):
             try:
                 if isinstance(processed_url, URLProcessingResult):
+                    existing_node = db.get_text_node_by_url(processed_url.url)
+                    if existing_node:
+                        log.info(
+                            f"URL already indexed (duplicate), will be skipped: {processed_url.url}"
+                        )
+                        urls[idx].set_indexing_skipped_due_to_duplicate()
+                        continue
+
                     text_node = TextNode(
                         url=processed_url.url,
                         url_feed_id=urls[idx].id,
@@ -42,6 +50,12 @@ class IndexingService:
                 urls[idx].set_indexing_failure()
 
         if len(nodes) > 0:
+            # TODO: an issue can happen here if a dupe is submitted quickly,
+            # or in the same request, it will pass the exists check in the loop
+            # but the DB will throw and we will not even set it to failed correctly.
+
+            # A good solution is to implement UPSERT vs duplicate detection...
             db.create_text_nodes(nodes=nodes, user_id=user_id)
+
         db.update_urls(urls=urls)
         log.info(f"Finished indexing {len(urls)} nodes, submitted by {user_id}")
