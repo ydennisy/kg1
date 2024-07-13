@@ -1,4 +1,5 @@
 setup.py
+db/__init__.py
 lib.egg-info/PKG-INFO
 lib.egg-info/SOURCES.txt
 lib.egg-info/dependency_links.txt

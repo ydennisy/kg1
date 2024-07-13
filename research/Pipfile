@@ -16,9 +16,11 @@ lib = {file = "lib", editable = true}
 scikit-learn = "==1.5.1"
 numpy = "==1.26.4"
 txtai = {extras = ["graph", "pipeline", "similarity"], version = "==7.2.0"}
+bertopic = "==0.16.2"
+nbformat = "==5.10.4"
 
 [dev-packages]
-ipykernel = "*"
+ipykernel = "==6.29.5"
 
 [requires]
 python_version = "3.11"
