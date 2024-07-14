@@ -1,7 +1,10 @@
 import json
 from enum import Enum
-from typing import List, Generator, Any
+from typing import Generator, Any
+
+import instructor
 from openai import OpenAI
+from pydantic import BaseModel, Field
 
 client = OpenAI()
 
@@ -28,7 +31,7 @@ PROMPT_TEMPLATE = (
 )
 
 
-def format_chunks(chunks: List[dict]) -> str:
+def format_chunks(chunks: list[dict]) -> str:
     result = ""
     for chunk in chunks:
         chunk.pop("id")
@@ -38,7 +41,7 @@ def format_chunks(chunks: List[dict]) -> str:
     return result
 
 
-def answer_with_context(chunks: List[dict], question: str) -> Generator[str, Any, Any]:
+def answer_with_context(chunks: list[dict], question: str) -> Generator[str, Any, Any]:
     formatted_chunks = format_chunks(chunks)
     messages = [
         {
@@ -95,7 +98,7 @@ Provide a summary that captures the common theme across these texts.
 DO NOT EXPLAIN OR REPEAT EACH TEXT."""
 
     result = client.chat.completions.create(
-        model="gpt-4o",
+        model=Models.GPT_4o_LATEST.value,
         messages=[
             {
                 "role": "user",
@@ -104,3 +107,35 @@ DO NOT EXPLAIN OR REPEAT EACH TEXT."""
         ],
     )
     return result.choices[0].message.content
+
+
+class ExpandedQueries(BaseModel):
+    queries: list[str] = Field(
+        ..., max_items=5, description="List of expanded search queries"
+    )
+
+
+def expand_search_query(query: str) -> list[str]:
+    client = instructor.from_openai(OpenAI())
+    prompt = f"""Given the user's search query, generate up to 5 expanded queries for improved information retrieval.
+    Each query should be related to the original but explore different aspects and use alternative terminology, especially when technical concepts have different names.
+    DO NOT include the original query in the expanded queries.
+    DO NOT simple rephrase the original query. The goal is to explore different aspects of the topic and related topics and ensure a breadth of keywords.
+    
+    Original query: {query}
+    
+    Provide the expanded queries as a list."""
+
+    messages = [
+        {
+            "role": "user",
+            "content": prompt,
+        }
+    ]
+    result = client.chat.completions.create(
+        messages=messages,
+        response_model=ExpandedQueries,
+        model=Models.GPT_4o_LATEST.value,
+        temperature=1.2,
+    )
+    return result.queries

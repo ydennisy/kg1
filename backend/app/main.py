@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 from pydantic import BaseModel, Field, ConfigDict, EmailStr
 
 from app.db import DB
-from app.llm import answer_with_context
+from app.llm import answer_with_context, expand_search_query
 from app.utils import (
     NodeEmbedder,
     get_current_user,
@@ -89,7 +89,7 @@ async def get_explore_route(user=Depends(get_current_user)):
 
 @app.get("/api/search")
 async def get_search_route(
-    q: str, mode: Literal["hybrid", "dense"], user=Depends(get_current_user)
+    q: str, mode: Literal["hybrid", "dense", "llm"], user=Depends(get_current_user)
 ):
     user_id = user.id
     query_emb = await NodeEmbedder.embed(q)
@@ -99,6 +99,21 @@ async def get_search_route(
     elif mode == "dense":
         pages = db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
         return pages
+    elif mode == "llm":
+        results = []
+        pages = db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
+        results.extend(pages)
+
+        queries = expand_search_query(q)
+        for query in queries:
+            query_emb = await NodeEmbedder.embed(query)
+            pages = db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
+            results.extend(pages)
+        results = list({v["id"]: v for v in results}.values())
+        # rank results by score key
+        results.sort(key=lambda x: x["score"], reverse=True)
+        print(results)
+        return results
     else:
         raise HTTPException(400)
 

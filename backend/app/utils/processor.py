@@ -74,8 +74,8 @@ class BaseProcessor:
             json = r.json()
             return json
 
-    def _extract_content_from_html(self, html):
-        extracted = trafilatura.bare_extraction(html)
+    def _extract_content_from_html(self, html: str, url: str):
+        extracted = trafilatura.bare_extraction(html, url=url, with_metadata=True)
         return extracted
 
     async def process(self, url: str) -> URLProcessingResult:
@@ -88,7 +88,7 @@ class DefaultProcessor(BaseProcessor):
     ) -> Union[URLProcessingResult, URLProcessingFailure]:
         try:
             html = await self._crawl_url(url)
-            extracted = self._extract_content_from_html(html)
+            extracted = self._extract_content_from_html(html, url)
             return URLProcessingResult(
                 url=url,
                 title=extracted["title"],

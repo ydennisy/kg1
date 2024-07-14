@@ -4,8 +4,8 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 from app.domain import TextNodeChunk
 
-CHUNK_SIZE = 512
-CHUNK_OVERLAP = 64
+CHUNK_SIZE = 2048
+CHUNK_OVERLAP = 256
 
 text_splitter = RecursiveCharacterTextSplitter(
     separators=["\n\n", "\n", " ", ""],
@@ -23,6 +23,4 @@ class NodeChunker:
     def chunk(node_id: str, node_text: str) -> list[TextNodeChunk]:
         chunks = text_splitter.create_documents(texts=[node_text])
         chunks = [c.page_content for c in chunks]
-        return [
-            TextNodeChunk(text=chunk, text_node_id=node_id) for chunk in chunks
-        ]
+        return [TextNodeChunk(text=chunk, text_node_id=node_id) for chunk in chunks]

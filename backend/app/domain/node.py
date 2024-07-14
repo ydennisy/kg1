@@ -28,7 +28,6 @@ class TextNode:
         self.summary = summary
         self.embedding = None
         self.chunks: list[TextNodeChunk] = []
-        self.create_title_if_missing()
 
     def create_chunks(self, chunker: NodeChunker) -> None:
         self.chunks = chunker.chunk(self.id, self.text)
@@ -43,6 +42,7 @@ class TextNode:
             chunk.embedding = embedding
 
     # TODO: this can be done using an LLM.
+    # NOTE: this method is switched off for now.
     def create_title_if_missing(self) -> None:
         if not self.title:
             words = self.text.split()[:10]
