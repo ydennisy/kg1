@@ -83,3 +83,24 @@ def summarise_text(text: str) -> str:
         temperature=0,
     )
     return result.choices[0].message.content
+
+
+def summarise_concept(texts: list[str]) -> str:
+    formatted_texts = "\n".join([f"{i+1}. {text}" for i, text in enumerate(texts)])
+    prompt = f"""Summarize the following related texts:
+
+{formatted_texts}
+
+Provide a summary that captures the common theme across these texts.
+DO NOT EXPLAIN OR REPEAT EACH TEXT."""
+
+    result = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            },
+        ],
+    )
+    return result.choices[0].message.content

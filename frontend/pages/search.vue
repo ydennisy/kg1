@@ -88,7 +88,11 @@ onMounted(async () => {
   <!-- Search Bar -->
   <SearchBar :is-loading="isLoading" @search="search">
     <template #toggle>
-      <Toggle @toggled="setSearchMode" on="Hybrid" off="Dense" />
+      <Listbox
+        @selected="setSearchMode"
+        default-option="Hybrid"
+        :options="['Hybrid', 'Dense', 'LLM']"
+      />
     </template>
   </SearchBar>
 

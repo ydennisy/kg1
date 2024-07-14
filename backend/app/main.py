@@ -29,13 +29,14 @@ from app.utils import (
     get_user_by_id,
 )
 from app.domain import URL, URLSource
-from app.services import IndexingService
+from app.services import IndexingService, ConceptsService
 
 
 load_dotenv()
 app = FastAPI()
 db = DB()
 indexing_service = IndexingService()
+concepts_service = ConceptsService()
 
 
 allowed_origins = [
@@ -232,9 +233,25 @@ async def admin_index_route(
 
     try:
         get_user_by_id(user_id)
-    except Exception as ex:
-        print(ex)
+    except Exception:
         raise HTTPException(status_code=404, detail="User not found")
 
     urls = [URL(url=url, source=URLSource.WEB) for url in payload.urls]
     background_tasks.add_task(indexing_service.index, urls, user_id)
+
+
+@app.post("/api/admin/create-concepts", status_code=status.HTTP_202_ACCEPTED)
+async def admin_index_route(
+    user_id: str,
+    x_admin_api_key: str = Header(...),
+    background_tasks: BackgroundTasks = BackgroundTasks(),
+):
+    if x_admin_api_key != os.getenv("ADMIN_API_KEY"):
+        raise HTTPException(status_code=401, detail="Invalid admin key")
+
+    try:
+        get_user_by_id(user_id)
+    except Exception:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    background_tasks.add_task(concepts_service.create_concepts, user_id)
