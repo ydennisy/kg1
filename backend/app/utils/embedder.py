@@ -3,9 +3,10 @@ import asyncio
 from openai import AsyncOpenAI, APIError
 
 from app.utils import get_logger
+from app.config import config
 
 log = get_logger(__name__)
-client = AsyncOpenAI()
+client = AsyncOpenAI(api_key=config.OPENAI_API_KEY)
 
 
 class NodeEmbedder:

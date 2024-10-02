@@ -132,7 +132,7 @@ class HNProcessor(BaseProcessor):
             result = await self._fetch_json(api_url)
             if "url" in result:
                 html = await self._crawl_url(result["url"])
-                extracted = self._extract_content_from_html(html)
+                extracted = self._extract_content_from_html(html, result["url"])
                 return URLProcessingResult(
                     url=result["url"],
                     title=extracted["title"],

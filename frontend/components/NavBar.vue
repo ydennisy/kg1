@@ -111,6 +111,24 @@ const logout = async () => {
                 class="rounded-md px-3 py-2 text-sm font-medium"
                 >Index</NuxtLink
               >
+              <NuxtLink
+                to="/list"
+                :class="isActive('/list')"
+                class="rounded-md px-3 py-2 text-sm font-medium"
+                >List</NuxtLink
+              >
+              <NuxtLink
+                to="/explore"
+                :class="isActive('/explore')"
+                class="rounded-md px-3 py-2 text-sm font-medium"
+                >Explore</NuxtLink
+              >
+              <NuxtLink
+                to="/chat"
+                :class="isActive('/chat')"
+                class="rounded-md px-3 py-2 text-sm font-medium"
+                >Chat</NuxtLink
+              >
             </div>
           </div>
         </div>
@@ -150,21 +168,38 @@ const logout = async () => {
         <NuxtLink
           to="/search"
           :class="isActive('/search')"
-          class="rounded-md px-3 py-2 text-sm font-medium"
-          aria-current="page"
+          class="block rounded-md px-3 py-2 text-base font-medium"
           >Search</NuxtLink
         >
         <NuxtLink
           to="/ask"
           :class="isActive('/ask')"
-          class="rounded-md px-3 py-2 text-sm font-medium"
+          class="block rounded-md px-3 py-2 text-base font-medium"
           >Ask</NuxtLink
         >
         <NuxtLink
           to="/index"
           :class="isActive('/index')"
-          class="rounded-md px-3 py-2 text-sm font-medium"
+          class="block rounded-md px-3 py-2 text-base font-medium"
           >Index</NuxtLink
+        >
+        <NuxtLink
+          to="/list"
+          :class="isActive('/list')"
+          class="block rounded-md px-3 py-2 text-base font-medium"
+          >List</NuxtLink
+        >
+        <NuxtLink
+          to="/explore"
+          :class="isActive('/explore')"
+          class="block rounded-md px-3 py-2 text-base font-medium"
+          >Explore</NuxtLink
+        >
+        <NuxtLink
+          to="/chat"
+          :class="isActive('/chat')"
+          class="block rounded-md px-3 py-2 text-base font-medium"
+          >Chat</NuxtLink
         >
       </div>
     </div>

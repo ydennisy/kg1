@@ -5,8 +5,9 @@ from typing import Generator, Any
 import instructor
 from openai import OpenAI
 from pydantic import BaseModel, Field
+from app.config import config
 
-client = OpenAI()
+client = OpenAI(api_key=config.OPENAI_API_KEY)
 
 
 class Models(Enum):

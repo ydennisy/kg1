@@ -23,7 +23,7 @@
     "@nuxtjs/tailwindcss": "^6.12.1",
     "@pinia/nuxt": "^0.5.2",
     "@types/markdown-it": "^14.1.2",
-    "nuxt": "^3.12.4",
+    "nuxt": "^3.13.2",
     "vue": "^3.4.34",
     "vue-router": "^4.4.0"
   }

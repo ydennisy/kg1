@@ -1,9 +1,0 @@
-rules:
-  - "All new business logic should have corresponding unit tests."
-  - "Add documentation in complex areas of the code, which explain WHY something was implemented in a specific manner."
-
-branch: "main"
-gha_enabled: True
-description: "kg1 is a personal knowledge management application, the backend is written in python using fastapi, and the frontend is a nuxt3 app."
-draft: False
-blocked_dirs: []

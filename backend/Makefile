@@ -1,5 +1,5 @@
 dev:
-	pipenv run uvicorn app.main:app --reload
+	uv run uvicorn app.main:app --reload
 
 docker-build:
 	docker build -t kg1-backend .

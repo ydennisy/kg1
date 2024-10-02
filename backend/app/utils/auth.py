@@ -3,8 +3,11 @@ from typing import Annotated
 
 from fastapi import Header, HTTPException
 from supabase import create_client
+from app.config import config
 
-client = create_client(os.getenv("SUPABASE_URL"), os.getenv("SUPABASE_KEY"))
+client = create_client(
+    supabase_url=config.SUPABASE_URL, supabase_key=config.SUPABASE_KEY
+)
 
 
 def get_current_user(authorization: Annotated[str | None, Header()] = None):

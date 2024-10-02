@@ -62,7 +62,7 @@ async def get_health():
 @app.get("/api/explore")
 async def get_explore_route(user=Depends(get_current_user)):
     user_id = user.id
-    nodes = db.get_text_node_embeddings(user_id)
+    nodes = await db.get_text_node_embeddings(user_id)
     embeddings = [node["embedding"] for node in nodes]
     reducer = umap.UMAP(random_state=42, min_dist=0.0, metric="cosine")
     embeddings_2d = reducer.fit_transform(embeddings)
@@ -94,20 +94,22 @@ async def get_search_route(
     user_id = user.id
     query_emb = await NodeEmbedder.embed(q)
     if mode == "hybrid":
-        pages = db.hybrid_search_text_nodes(q, query_emb)
+        pages = await db.hybrid_search_text_nodes(q, query_emb)
         return pages
     elif mode == "dense":
-        pages = db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
+        pages = await db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
         return pages
     elif mode == "llm":
         results = []
-        pages = db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
+        pages = await db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
         results.extend(pages)
 
         queries = expand_search_query(q)
         for query in queries:
             query_emb = await NodeEmbedder.embed(query)
-            pages = db.search_text_nodes(query_emb, user_id=user_id, threshold=0.1)
+            pages = await db.search_text_nodes(
+                query_emb, user_id=user_id, threshold=0.1
+            )
             results.extend(pages)
         results = list({v["id"]: v for v in results}.values())
         # rank results by score key
@@ -126,7 +128,7 @@ async def get_ask_route(
 ):
     node_ids = id
     user_id = user.id
-    usage_count = db.increment_usage_counter()
+    usage_count = await db.increment_usage_counter()
     if usage_count > 1000:
         # TODO: handle this client side!
         raise HTTPException(429)
@@ -137,11 +139,11 @@ async def get_ask_route(
         # TODO: add a method to fetch multiple items in one query!
         chunks = []
         for id in node_ids:
-            node = db.get_text_node(id)
+            node = await db.get_text_node(id)
             del node["embedding"]
             chunks.append(node)
     else:
-        chunks = db.search_text_node_chunks(query_emb, user_id=user_id)
+        chunks = await db.search_text_node_chunks(query_emb, user_id=user_id)
         # NOTE: this is best moved into the DB query when we find the correct value.
         chunks = [c for c in chunks if c["score"] >= 0.4]
 
@@ -159,13 +161,13 @@ async def get_ask_route(
 @app.get("/api/node")
 async def get_node_route(id: str, user=Depends(get_current_user)):
     user_id = user.id
-    usage_count = db.increment_usage_counter()
+    usage_count = await db.increment_usage_counter()
     if usage_count > 1000:
         # TODO: handle this client side!
         raise HTTPException(429)
 
-    node = db.get_text_node(id)
-    related_nodes = db.search_text_nodes(
+    node = await db.get_text_node(id)
+    related_nodes = await db.search_text_nodes(
         node["embedding"], user_id=user_id, threshold=0.4, top_n=5
     )
     related_nodes = [n for n in related_nodes if n["id"] != id]
@@ -178,7 +180,7 @@ async def get_node_route(id: str, user=Depends(get_current_user)):
 @app.get("/api/index-feed")
 async def get_index_feed_route(user=Depends(get_current_user)):
     user_id = user.id
-    urls = db.get_urls_feed(user_id)
+    urls = await db.get_urls_feed(user_id)
     return urls
 
 
@@ -217,7 +219,7 @@ async def post_index_route(request: Request):
         payload = IndexEmailPayload(**parsed_form)
 
         app_email_alias = payload.to.split("@")[0]
-        user_id = db.get_user_id_by_email_alias(app_email_alias)
+        user_id = await db.get_user_id_by_email_alias(app_email_alias)
 
         raw_urls = parse_urls_from_text(payload.text)
         urls = [URL(url=url, source=URLSource.EMAIL) for url in raw_urls]
@@ -230,7 +232,7 @@ async def post_index_route(request: Request):
 @app.get("/api/me")
 async def get_profile_route(user=Depends(get_current_user)):
     user_id = user.id
-    profile = db.get_user_profile_by_id(user_id)
+    profile = await db.get_user_profile_by_id(user_id)
     if not profile:
         raise HTTPException(404)
     return profile

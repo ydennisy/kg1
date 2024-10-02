@@ -153,6 +153,7 @@ returns table (
   id uuid,
   "url" text,
   title text,
+  "text" text,
   score float
 )
 language sql stable
@@ -162,6 +163,7 @@ as $$
       id,
       url,
       title,
+      text,
       round(cast((embedding <#> query_embedding) * -1 as numeric), 3) as score
     from text_nodes
     where user_id = user_id_filter
@@ -186,6 +188,7 @@ returns table (
   id uuid,
   "url" text,
   title text,
+  "text" text,
   score float
 )
 language sql
@@ -216,6 +219,7 @@ select
   text_nodes.id,
   text_nodes.url,
   text_nodes.title,
+  text_nodes.text,
   coalesce(1.0 / (rrf_k + full_text.rank_ix), 0.0) * full_text_weight +
   coalesce(1.0 / (rrf_k + semantic.rank_ix), 0.0) * semantic_weight as score
 from
