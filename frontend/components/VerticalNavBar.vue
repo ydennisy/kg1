@@ -6,6 +6,7 @@ const navLinks = [
   { to: '/list', text: 'List' },
   { to: '/explore', text: 'Explore' },
   { to: '/chat', text: 'Chat' },
+  { to: '/fts', text: 'FTS' },
 ];
 
 const route = useRoute();

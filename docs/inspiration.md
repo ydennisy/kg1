@@ -34,4 +34,20 @@
 - https://github.com/metarank/metarank
 - https://github.com/yoheinakajima/instagraph
 - https://github.com/yoheinakajima/mindgraph
+- https://chromewebstore.google.com/detail/hlai/dkppddahgjflcipegjnjbladmgmimkpa?pli=1
 - https://www.microsoft.com/en-us/research/blog/graphrag-unlocking-llm-discovery-on-narrative-private-data/
+- https://delve.a9.io/
+- https://andymatuschak.org/
+- https://workflowy.com/systems/build-a-second-brain/
+
+## Apps
+
+- [Memex](https://memex.garden/)
+- [Mem](https://get.mem.ai/)
+- [Logseq](https://logseq.com/)
+- [Tana](https://tana.inc/)
+- [Capacities](https://capacities.io/)
+- [Roam](https://roamresearch.com/)
+- [Obsidian](https://obsidian.md/)
+- [Hyperplace](https://hyper.place/)
+- [Workflowy](https://workflowy.com/)

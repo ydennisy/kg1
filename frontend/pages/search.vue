@@ -12,6 +12,7 @@ const isResultsEmpty = ref(false);
 const lastSearchQuery = ref('');
 const searchMode = ref('');
 const selectedContextIds = ref<Set<string>>(new Set());
+const searchTime = ref(0);
 
 const selectedContextTitles = computed(() => {
   return results.value
@@ -28,6 +29,7 @@ const contextCount = computed(() => selectedContextIds.value.size);
 const apiBase = config.public.apiBase;
 
 const search = async (query: string) => {
+  const startTime = performance.now();
   isLoading.value = true;
   isResultsEmpty.value = false;
   lastSearchQuery.value = query;
@@ -54,6 +56,7 @@ const search = async (query: string) => {
     isResultsEmpty.value = true;
   }
   isLoading.value = false;
+  searchTime.value = performance.now() - startTime;
 };
 
 const setSearchMode = (mode: string) => {
@@ -95,6 +98,14 @@ onMounted(async () => {
       />
     </template>
   </SearchBar>
+
+  <!-- Search Metrics -->
+  <div
+    v-if="!isLoading && lastSearchQuery"
+    class="text-sm text-gray-500 mt-2 mb-4"
+  >
+    {{ results.length }} results found in {{ searchTime.toFixed(2) }} ms
+  </div>
 
   <!-- Notification Banner -->
   <div

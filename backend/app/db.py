@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import json
 from typing import TYPE_CHECKING
 
@@ -83,6 +82,17 @@ class DB:
         )
         return result.data[0]
 
+    async def get_text_nodes(self, user_id: str):
+        if not self._client:
+            await self.initialize()
+        result = (
+            await self._client.table("text_nodes")
+            .select("id, title, text, summary, url")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        return result.data
+
     async def get_similar_text_nodes(self, id: str, top_n: int = 10):
         if not self._client:
             await self.initialize()
@@ -134,9 +144,11 @@ class DB:
             text_node_chunks_to_persist.extend(text_node_chunks)
 
         await self._client.table("text_nodes").insert(text_nodes_to_persist).execute()
-        await self._client.table("text_node_chunks").insert(
-            text_node_chunks_to_persist
-        ).execute()
+        await (
+            self._client.table("text_node_chunks")
+            .insert(text_node_chunks_to_persist)
+            .execute()
+        )
 
     async def get_urls_feed(self, user_id: str):
         if not self._client:

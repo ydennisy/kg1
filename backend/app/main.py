@@ -212,7 +212,7 @@ class IndexEmailPayload(BaseModel):
 
 
 @app.post("/api/email", status_code=status.HTTP_201_CREATED)
-async def post_index_route(request: Request):
+async def post_email_route(request: Request):
     try:
         form = await request.form()
         parsed_form = jsonable_encoder(form)
@@ -258,7 +258,7 @@ async def admin_index_route(
 
 
 @app.post("/api/admin/create-concepts", status_code=status.HTTP_202_ACCEPTED)
-async def admin_index_route(
+async def admin_create_concepts_route(
     user_id: str,
     x_admin_api_key: str = Header(...),
     background_tasks: BackgroundTasks = BackgroundTasks(),
@@ -272,3 +272,21 @@ async def admin_index_route(
         raise HTTPException(status_code=404, detail="User not found")
 
     background_tasks.add_task(concepts_service.create_concepts, user_id)
+
+
+@app.get("/api/fts")
+async def get_full_text_search(user=Depends(get_current_user)):
+    nodes = await db.get_text_nodes(user_id=user.id)
+
+    fts_index = {}
+    for doc_idx, node in enumerate(nodes):
+        full_text = node["title"] + " " + node["summary"] + " " + node["text"]
+        full_text = full_text.lower()
+        words = full_text.split(" ")
+        unique_words = np.unique(words)
+        for word in unique_words:
+            if word not in fts_index:
+                fts_index[word] = []
+            fts_index[word].append(doc_idx)
+
+    return {"docs": nodes, "index": fts_index}

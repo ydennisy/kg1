@@ -12,10 +12,17 @@
   "dependencies": {
     "@headlessui/vue": "^1.7.21",
     "@traptitech/markdown-it-katex": "^3.6.0",
+    "@vueuse/core": "^11.1.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "echarts": "^5.5.1",
     "highlight.js": "^11.10.0",
+    "lucide-vue-next": "^0.447.0",
     "markdown-it": "^14.1.0",
+    "radix-vue": "^1.9.6",
+    "tailwind-merge": "^2.5.3",
+    "tailwindcss-animate": "^1.0.7",
     "vue-echarts": "^6.7.3"
   },
   "devDependencies": {
@@ -24,6 +31,8 @@
     "@pinia/nuxt": "^0.5.2",
     "@types/markdown-it": "^14.1.2",
     "nuxt": "^3.13.2",
+    "shadcn-nuxt": "^0.10.4",
+    "typescript": "^5.6.2",
     "vue": "^3.4.34",
     "vue-router": "^4.4.0"
   }

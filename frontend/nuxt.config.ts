@@ -3,7 +3,12 @@ export default defineNuxtConfig({
 
   // NOTE: this would allow moving everything into src!
   // srcDir: "src/",
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@pinia/nuxt'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@nuxtjs/supabase',
+    '@pinia/nuxt',
+    'shadcn-nuxt',
+  ],
 
   css: ['~/assets/css/main.css'],
 
@@ -39,6 +44,18 @@ export default defineNuxtConfig({
       exclude: ['/'],
       cookieRedirect: true,
     },
+  },
+
+  shadcn: {
+    /**
+     * Prefix for all the imported component
+     */
+    prefix: '',
+    /**
+     * Directory that the component lives in.
+     * @default "./components/ui"
+     */
+    componentDir: './components/ui',
   },
 
   compatibilityDate: '2024-07-13',
