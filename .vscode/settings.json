@@ -1,5 +1,6 @@
 {
   "css.customData": [".vscode/tailwind.json"],
+  "notebook.formatOnSave.enabled": true,
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
