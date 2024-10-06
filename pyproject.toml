@@ -1,0 +1,13 @@
+[project]
+name = "tools-for-thought"
+version = "0.0.1"
+description = "A monorepo of apps, experiments and utils to advance human thinking using computers & AI."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["backend", "research"]

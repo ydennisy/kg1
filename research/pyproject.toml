@@ -1,0 +1,26 @@
+[project]
+name = "research"
+version = "0.0.1"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "bertopic>=0.16.3",
+    "google-cloud-storage>=2.18.2",
+    "instructor>=1.5.1",
+    "lxml>=5.3.0",
+    "numpy>=1.26.4",
+    "openai>=1.51.0",
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "scikit-learn>=1.5.2",
+    "supabase>=2.9.0",
+    "trafilatura>=1.12.2",
+    "txtai>=7.4.0",
+]
+
+[tool.uv]
+package = false
+dev-dependencies = [
+    "ipykernel>=6.29.5",
+]
