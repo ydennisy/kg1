@@ -916,6 +916,15 @@ wheels = [
 ]
 
 [[package]]
+name = "jsonpickle"
+version = "3.3.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/7b/c3/7b43eb963bfb3fa95385e677bb9d027c56d65d395d9f4bd52833affd1a4f/jsonpickle-3.3.0.tar.gz", hash = "sha256:ab467e601e5b1a1cd76f1819d014795165da071744ef30bf3786e9bc549de25a", size = 329715 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/71/1f/224e27180204282c1ea378b86944585616c1978544b9f5277cf907fdb26c/jsonpickle-3.3.0-py3-none-any.whl", hash = "sha256:287c12143f35571ab00e224fa323aa4b090d5a7f086f5f494d7ee9c7eb1a380a", size = 42370 },
+]
+
+[[package]]
 name = "jsonpointer"
 version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1958,6 +1967,20 @@ wheels = [
 ]
 
 [[package]]
+name = "pyvis"
+version = "0.3.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "ipython" },
+    { name = "jinja2" },
+    { name = "jsonpickle" },
+    { name = "networkx" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ab/4b/e37e4e5d5ee1179694917b445768bdbfb084f5a59ecd38089d3413d4c70f/pyvis-0.3.2-py3-none-any.whl", hash = "sha256:5720c4ca8161dc5d9ab352015723abb7a8bb8fb443edeb07f7a322db34a97555", size = 756038 },
+]
+
+[[package]]
 name = "pywin32"
 version = "307"
 source = { registry = "https://pypi.org/simple" }
@@ -2128,11 +2151,15 @@ dependencies = [
     { name = "bertopic" },
     { name = "google-cloud-storage" },
     { name = "instructor" },
+    { name = "ipython" },
+    { name = "jinja2" },
     { name = "lxml" },
+    { name = "networkx" },
     { name = "numpy" },
     { name = "openai" },
     { name = "pydantic" },
     { name = "python-dotenv" },
+    { name = "pyvis" },
     { name = "requests" },
     { name = "scikit-learn" },
     { name = "supabase" },
@@ -2150,11 +2177,15 @@ requires-dist = [
     { name = "bertopic", specifier = ">=0.16.3" },
     { name = "google-cloud-storage", specifier = ">=2.18.2" },
     { name = "instructor", specifier = ">=1.5.1" },
+    { name = "ipython", specifier = ">=8.28.0" },
+    { name = "jinja2", specifier = ">=3.1.4" },
     { name = "lxml", specifier = ">=5.3.0" },
+    { name = "networkx", specifier = ">=3.3" },
     { name = "numpy", specifier = ">=1.26.4" },
     { name = "openai", specifier = ">=1.51.0" },
     { name = "pydantic", specifier = ">=2.9.2" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "pyvis", specifier = ">=0.3.2" },
     { name = "requests", specifier = ">=2.32.3" },
     { name = "scikit-learn", specifier = ">=1.5.2" },
     { name = "supabase", specifier = ">=2.9.0" },

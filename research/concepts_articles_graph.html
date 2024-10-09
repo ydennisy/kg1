@@ -1,0 +1,179 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #f0f0f0;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+             #config {
+                 float: left;
+                 width: 400px;
+                 height: 600px;
+             }
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+            <div id="config"></div>
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#1f78b4", "font": {"color": "black"}, "id": "Article_0", "label": "Building a Second Brain: The Definitive Introductory Guide", "shape": "box", "size": 10, "title": "Building a Second Brain: The Definitive Introductory Guide", "url": "https://fortelabs.com/blog/basboverview/"}, {"color": "#33a02c", "font": {"color": "black"}, "id": "Second Brain", "label": "Second Brain", "shape": "ellipse", "size": 10, "title": "An external, centralized digital repository to store ideas, insights, and knowledge, enhancing memory and intellect using technology."}, {"color": "#33a02c", "font": {"color": "black"}, "id": "CODE Method", "label": "CODE Method", "shape": "ellipse", "size": 10, "title": "A four-step process for building a Second Brain: Capture, Organize, Distill, and Express."}, {"color": "#33a02c", "font": {"color": "black"}, "id": "PARA Method", "label": "PARA Method", "shape": "ellipse", "size": 10, "title": "An organizational system categorizing information into Projects, Areas, Resources, and Archive based on actionability."}, {"color": "#33a02c", "font": {"color": "black"}, "id": "Knowledge Management", "label": "Knowledge Management", "shape": "ellipse", "size": 10, "title": "The systematic process of capturing, organizing, sharing, and utilizing knowledge within an organization or individually."}, {"color": "#33a02c", "font": {"color": "black"}, "id": "Progressive Summarization", "label": "Progressive Summarization", "shape": "ellipse", "size": 10, "title": "A technique within the CODE Method for distilling notes into actionable summaries through multiple stages over time."}, {"color": "#1f78b4", "font": {"color": "black"}, "id": "Article_1", "label": "Getting Started \u2022 Zettelkasten Method", "shape": "box", "size": 10, "title": "Getting Started \u2022 Zettelkasten Method", "url": "https://zettelkasten.de/overview/"}, {"color": "#33a02c", "font": {"color": "black"}, "id": "Zettelkasten Method", "label": "Zettelkasten Method", "shape": "ellipse", "size": 10, "title": "A system of note-taking and knowledge management where notes are interconnected, creating a web of knowledge for enhanced understanding."}, {"color": "#33a02c", "font": {"color": "black"}, "id": "Atomicity Principle", "label": "Atomicity Principle", "shape": "ellipse", "size": 10, "title": "A guideline advocating that each note or piece of information should represent a single idea or concept, aiding precise knowledge management."}, {"color": "#1f78b4", "font": {"color": "black"}, "id": "Article_2", "label": "The Perfect Mind Map - 4 Step Framework", "shape": "box", "size": 10, "title": "The Perfect Mind Map - 4 Step Framework", "url": "https://blog.alexanderfyoung.com/the-perfect-mindmap-4-step-framework/"}, {"color": "#33a02c", "font": {"color": "black"}, "id": "Mind Mapping", "label": "Mind Mapping", "shape": "ellipse", "size": 10, "title": "A visual and spatial tool for organizing information, connecting ideas, and enhancing understanding through branches and sub-branches."}, {"color": "#1f78b4", "font": {"color": "black"}, "id": "Article_3", "label": "The Best Note-Taking Methods for College Students \u0026 Serious Note-takers | Goodnotes Blog", "shape": "box", "size": 10, "title": "The Best Note-Taking Methods for College Students \u0026 Serious Note-takers | Goodnotes Blog", "url": "https://www.goodnotes.com/blog/note-taking-methods"}, {"color": "#33a02c", "font": {"color": "black"}, "id": "Note-Taking Methods", "label": "Note-Taking Methods", "shape": "ellipse", "size": 10, "title": "Various structured approaches to recording information, such as the Cornell and Outline methods, aiding learning and recall."}]);
+                  edges = new vis.DataSet([{"from": "Article_0", "to": "Second Brain", "width": 1}, {"from": "Article_0", "to": "CODE Method", "width": 1}, {"from": "Article_0", "to": "PARA Method", "width": 1}, {"from": "Article_0", "to": "Knowledge Management", "width": 1}, {"from": "Article_0", "to": "Progressive Summarization", "width": 1}, {"from": "Article_1", "to": "Zettelkasten Method", "width": 1}, {"from": "Article_1", "to": "Knowledge Management", "width": 1}, {"from": "Article_1", "to": "Atomicity Principle", "width": 1}, {"from": "Article_2", "to": "Mind Mapping", "width": 1}, {"from": "Article_3", "to": "Zettelkasten Method", "width": 1}, {"from": "Article_3", "to": "Mind Mapping", "width": 1}, {"from": "Article_3", "to": "Note-Taking Methods", "width": 1}, {"from": "Article_3", "to": "Atomicity Principle", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": true,
+        "filter": [
+            "physics"
+        ]
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.4,
+            "gravitationalConstant": -50,
+            "springConstant": 0.08,
+            "springLength": 100
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+                  // if this network requires displaying the configure window,
+                  // put it in its div
+                  options.configure["container"] = document.getElementById("config");
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
