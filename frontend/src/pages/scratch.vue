@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
+import { Button } from '~/src/components/ui/button';
 import {
   Card,
   CardContent,
@@ -7,9 +7,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '~/src/components/ui/card';
+import { Input } from '~/src/components/ui/input';
+import { Label } from '~/src/components/ui/label';
 </script>
 
 <template>
