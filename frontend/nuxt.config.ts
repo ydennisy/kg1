@@ -48,7 +48,7 @@ export default defineNuxtConfig({
      * Directory that the component lives in.
      * @default "./components/ui"
      */
-    componentDir: './components/ui',
+    componentDir: './src/components/ui',
   },
 
   compatibilityDate: '2024-07-13',

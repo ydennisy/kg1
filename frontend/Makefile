@@ -1,2 +1,2 @@
 dev:
-	npm run dev
+	pnpm run dev
