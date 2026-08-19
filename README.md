@@ -1,3 +1,5 @@
+
+
 # `KG1`
 
 KG1 is a knowledge management application, infused with AI.
@@ -7,7 +9,7 @@ You can access a hosted version at [kg1.io](https://kg1.io).
 > This project is currently in a very early development/experimental stage.
 > Please do not rely on the hosted version, data cannot be considered "long-term persisted".
 
-**The long term vision is of this project is to:**
+**The long term vision of this project is to:**
 
 - Develop an abstract and general encoding of knowledge.
 - Connect knowledge nodes into a personal graph in an automated manner.
